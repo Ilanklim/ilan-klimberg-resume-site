@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 248 250 252;
+    --foreground: 203 24% 12%;
+
+    --card: 255 255 255;
+    --card-foreground: 203 24% 12%;
+
+    --popover: 255 255 255;
+    --popover-foreground: 203 24% 12%;
+
+    --primary: 214 84% 56%;
+    --primary-foreground: 255 255 255;
+    --primary-glow: 214 84% 70%;
+    
+    /* Additional color tokens for variety */
+    --success: 142 76% 36%;
+    --success-foreground: 355 100% 97%;
+    --warning: 32 95% 44%;
+    --warning-foreground: 355 100% 97%;
+    --info: 199 89% 48%;
+    --info-foreground: 355 100% 97%;
+
+    --secondary: 241 245 249;
+    --secondary-foreground: 203 24% 12%;
+
+    --muted: 241 245 249;
+    --muted-foreground: 203 24% 40%;
+
+    --accent: 233 246 255;
+    --accent-foreground: 214 84% 56%;
+
+    /* Professional gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(214, 84%, 56%), hsl(214, 84%, 70%));
+    --gradient-subtle: linear-gradient(180deg, hsl(248, 250, 252), hsl(241, 245, 249));
+    --gradient-card: linear-gradient(145deg, hsl(255, 255, 255), hsl(248, 250, 252));
+    --gradient-success: linear-gradient(135deg, hsl(142, 76%, 36%), hsl(142, 76%, 50%));
+    --gradient-warning: linear-gradient(135deg, hsl(32, 95%, 44%), hsl(32, 95%, 58%));
+    --gradient-info: linear-gradient(135deg, hsl(199, 89%, 48%), hsl(199, 89%, 62%));
+
+    /* Professional shadows */
+    --shadow-elegant: 0 10px 30px -10px hsl(214 84% 56% / 0.15);
+    --shadow-card: 0 4px 12px -2px hsl(203 24% 12% / 0.08);
+    --shadow-glow: 0 0 40px hsl(214 84% 70% / 0.3);
+
+    /* Animations */
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Highlight animation for search results */
+  --highlight-glow: 0 0 20px hsl(var(--primary) / 0.3);
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 203 24% 8%;
+    --foreground: 241 245 249;
+
+    --card: 203 24% 10%;
+    --card-foreground: 241 245 249;
+
+    --popover: 203 24% 10%;
+    --popover-foreground: 241 245 249;
+
+    --primary: 214 84% 70%;
+    --primary-foreground: 203 24% 8%;
+    --primary-glow: 214 84% 80%;
+
+    --secondary: 203 24% 12%;
+    --secondary-foreground: 241 245 249;
+
+    --muted: 203 24% 12%;
+    --muted-foreground: 203 24% 60%;
+
+    --accent: 203 24% 12%;
+    --accent-foreground: 214 84% 70%;
+
+    /* Dark mode gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(214, 84%, 70%), hsl(214, 84%, 80%));
+    --gradient-subtle: linear-gradient(180deg, hsl(203, 24%, 8%), hsl(203, 24%, 12%));
+    --gradient-card: linear-gradient(145deg, hsl(203, 24%, 10%), hsl(203, 24%, 8%));
+
+    /* Dark mode shadows */
+    --shadow-elegant: 0 10px 30px -10px hsl(214 84% 70% / 0.25);
+    --shadow-card: 0 4px 12px -2px hsl(0 0% 0% / 0.3);
+    --shadow-glow: 0 0 40px hsl(214 84% 80% / 0.4);
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Highlight section animation for search results */
+.highlight-section {
+  animation: highlight-pulse 3s ease-in-out;
+  border-radius: 8px;
+}
+
+@keyframes highlight-pulse {
+  0%, 100% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: var(--highlight-glow);
+    transform: scale(1.02);
+  }
+}
