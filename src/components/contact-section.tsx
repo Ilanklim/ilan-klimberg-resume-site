@@ -102,23 +102,6 @@ export function ContactSection() {
       </div>
 
 
-      {/* Contact Info Footer */}
-      <div className="text-center pt-8 border-t border-border/50">
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-muted-foreground">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-full bg-accent">
-              <Phone className="h-4 w-4 text-accent-foreground" />
-            </div>
-            <span className="text-lg font-medium">+1 305-502-0995</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-full bg-accent">
-              <Mail className="h-4 w-4 text-accent-foreground" />
-            </div>
-            <span className="text-lg font-medium">idk7@cornell.edu</span>
-          </div>
-        </div>
-      </div>
     </Section>
   )
 }

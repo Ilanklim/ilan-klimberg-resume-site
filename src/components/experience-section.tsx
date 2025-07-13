@@ -2,7 +2,7 @@ import { Section } from "@/components/ui/section"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Calendar, MapPin, ExternalLink, TrendingUp, Users, DollarSign, Target, Briefcase } from "lucide-react"
+import { Calendar, MapPin, ExternalLink, TrendingUp, Users, Target, Briefcase, Blocks } from "lucide-react"
 
 interface Experience {
   title: string
@@ -20,23 +20,6 @@ interface Experience {
 
 const experiences: Experience[] = [
   {
-    title: "Associate Product Manager Intern",
-    company: "Coinbase",
-    location: "San Francisco, CA",
-    period: "May – Aug 2025",
-    description: "Incoming APM intern at the largest American crypto exchange, selected from 10,000+ applicants",
-    highlights: [
-      "Selected as 1 of 17 candidates from over 10,000 applicants for Coinbase's prestigious APM internship program",
-      "Will work on product strategy and development for cryptocurrency exchange platform",
-      "Expected to contribute to user experience improvements and feature development"
-    ],
-    skills: ["Product Strategy", "User Research", "Data Analysis", "Cross-functional Leadership"],
-    isUpcoming: true,
-    companyUrl: "https://www.coinbase.com",
-    icon: TrendingUp,
-    color: "from-blue-600 to-purple-600"
-  },
-  {
     title: "Founder",
     company: "KBCrypto",
     location: "Madrid, Spain",
@@ -51,7 +34,7 @@ const experiences: Experience[] = [
     ],
     skills: ["Blockchain Technology", "SEO Optimization", "Content Marketing", "Business Development", "Analytics"],
     companyUrl: "https://www.kbcrypto.io",
-    icon: DollarSign,
+    icon: Blocks,
     color: "from-green-500 to-emerald-600"
   },
   {
@@ -107,83 +90,44 @@ export function ExperienceSection() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="space-y-8">
         {experiences.map((exp, index) => {
           const Icon = exp.icon
           return (
             <Card 
               key={index} 
-              className="relative overflow-hidden shadow-elegant hover:shadow-glow transition-all duration-500 hover:-translate-y-2 bg-gradient-card border-0 h-fit"
+              className="overflow-hidden shadow-elegant hover:shadow-glow transition-all duration-500 hover:-translate-y-1 bg-gradient-card border-0"
             >
-              {exp.isUpcoming && (
-                <div className="absolute top-4 right-4 z-10">
-                  <Badge className="bg-gradient-primary text-primary-foreground shadow-lg text-xs">
-                    Upcoming
-                  </Badge>
-                </div>
-              )}
-              
-              <div className="p-6">
+              <div className="grid lg:grid-cols-4 gap-6 p-6">
                 {/* Company Info */}
-                <div className="space-y-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <div className={`p-3 rounded-xl bg-gradient-to-br ${exp.color} shadow-lg flex-shrink-0`}>
+                <div className="lg:col-span-1 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${exp.color} shadow-lg`}>
                       <Icon className="h-6 w-6 text-white" />
                     </div>
-                    <div className="min-w-0">
-                      <h3 className="text-xl font-bold text-foreground mb-1 leading-tight">{exp.title}</h3>
-                      <p className="text-lg text-primary font-semibold mb-2">{exp.company}</p>
+                    <div>
+                      <h3 className="text-lg font-bold text-foreground leading-tight">{exp.title}</h3>
+                      <p className="text-base text-primary font-semibold">{exp.company}</p>
                     </div>
                   </div>
                   
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Calendar className="h-4 w-4" />
-                      <span className="font-medium text-sm">{exp.period}</span>
+                      <span className="text-sm font-medium">{exp.period}</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <MapPin className="h-4 w-4" />
-                      <span className="font-medium text-sm">{exp.location}</span>
+                      <span className="text-sm font-medium">{exp.location}</span>
                     </div>
                   </div>
                   
-                  <p className="text-muted-foreground leading-relaxed text-sm italic">
+                  <p className="text-muted-foreground leading-relaxed text-sm">
                     {exp.description}
                   </p>
-                </div>
 
-                {/* Skills */}
-                <div className="space-y-2 mb-4">
-                  <h4 className="font-semibold text-foreground text-sm">Key Skills</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {exp.skills.map((skill, idx) => (
-                      <Badge 
-                        key={idx} 
-                        variant="secondary" 
-                        className="px-2 py-0.5 text-xs bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors"
-                      >
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Achievements */}
-                <div className="mb-4">
-                  <h4 className="font-semibold text-foreground text-sm mb-3">Key Achievements</h4>
-                  <ul className="space-y-2">
-                    {exp.highlights.slice(0, 3).map((highlight, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${exp.color} mt-1.5 flex-shrink-0`}></div>
-                        <p className="text-foreground leading-relaxed text-sm">{highlight}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Company Link */}
-                {exp.companyUrl && (
-                  <div className="pt-2">
+                  {/* Company Link */}
+                  {exp.companyUrl && (
                     <Button 
                       size="sm" 
                       className="bg-gradient-primary hover:shadow-glow transition-all duration-300 text-xs px-3 py-1"
@@ -192,8 +136,37 @@ export function ExperienceSection() {
                       <ExternalLink className="mr-1 h-3 w-3" />
                       Visit
                     </Button>
+                  )}
+                </div>
+
+                {/* Skills */}
+                <div className="lg:col-span-1">
+                  <h4 className="font-semibold text-foreground text-sm mb-3">Key Skills</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {exp.skills.map((skill, idx) => (
+                      <Badge 
+                        key={idx} 
+                        variant="secondary" 
+                        className="px-2 py-0.5 text-xs bg-primary/10 text-primary border-primary/20"
+                      >
+                        {skill}
+                      </Badge>
+                    ))}
                   </div>
-                )}
+                </div>
+                
+                {/* Achievements */}
+                <div className="lg:col-span-2">
+                  <h4 className="font-semibold text-foreground text-sm mb-3">Key Achievements</h4>
+                  <ul className="space-y-2">
+                    {exp.highlights.map((highlight, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${exp.color} mt-1.5 flex-shrink-0`}></div>
+                        <p className="text-foreground leading-relaxed text-sm">{highlight}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </Card>
           )

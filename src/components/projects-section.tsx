@@ -71,23 +71,23 @@ export function ProjectsSection() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="space-y-8">
         {projects.map((project, index) => {
           const Icon = project.icon
           return (
             <Card 
               key={index} 
-              className="overflow-hidden shadow-elegant hover:shadow-glow transition-all duration-500 hover:-translate-y-2 bg-gradient-card border-0 h-fit"
+              className="overflow-hidden shadow-elegant hover:shadow-glow transition-all duration-500 hover:-translate-y-1 bg-gradient-card border-0"
             >
-              <div className="p-6">
+              <div className="grid lg:grid-cols-4 gap-6 p-6">
                 {/* Project Header */}
-                <div className="space-y-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <div className={`p-3 rounded-xl bg-gradient-to-br ${project.color} shadow-lg flex-shrink-0`}>
+                <div className="lg:col-span-1 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${project.color} shadow-lg`}>
                       <Icon className="h-6 w-6 text-white" />
                     </div>
-                    <div className="min-w-0">
-                      <h3 className="text-xl font-bold text-foreground mb-1 leading-tight">{project.title}</h3>
+                    <div>
+                      <h3 className="text-lg font-bold text-foreground leading-tight">{project.title}</h3>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Calendar className="h-3 w-3" />
                         <span className="text-sm font-medium">{project.period}</span>
@@ -98,17 +98,44 @@ export function ProjectsSection() {
                   <p className="text-muted-foreground leading-relaxed text-sm">
                     {project.description}
                   </p>
+
+                  {/* Links */}
+                  {project.links && (
+                    <div className="flex gap-2">
+                      {project.links.github && (
+                        <Button 
+                          size="sm" 
+                          className="bg-gradient-primary hover:shadow-glow transition-all duration-300 text-xs px-3 py-1"
+                          onClick={() => window.open(project.links.github, "_blank")}
+                        >
+                          <Github className="mr-1 h-3 w-3" />
+                          Code
+                        </Button>
+                      )}
+                      {project.links.demo && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="hover:shadow-card transition-all duration-300 text-xs px-3 py-1"
+                          onClick={() => window.open(project.links.demo, "_blank")}
+                        >
+                          <ExternalLink className="mr-1 h-3 w-3" />
+                          Demo
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </div>
                 
                 {/* Skills */}
-                <div className="space-y-2 mb-4">
-                  <h4 className="font-semibold text-foreground text-sm">Technologies</h4>
+                <div className="lg:col-span-1">
+                  <h4 className="font-semibold text-foreground text-sm mb-3">Technologies</h4>
                   <div className="flex flex-wrap gap-1">
                     {project.skills.map((skill, idx) => (
                       <Badge 
                         key={idx} 
                         variant="secondary" 
-                        className="px-2 py-0.5 text-xs bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors"
+                        className="px-2 py-0.5 text-xs bg-primary/10 text-primary border-primary/20"
                       >
                         {skill}
                       </Badge>
@@ -116,11 +143,11 @@ export function ProjectsSection() {
                   </div>
                 </div>
 
-                {/* Highlights */}
-                <div className="mb-4">
+                {/* Project Details */}
+                <div className="lg:col-span-2">
                   <h4 className="font-semibold text-foreground text-sm mb-3">Key Achievements</h4>
                   <ul className="space-y-2">
-                    {project.highlights.slice(0, 3).map((highlight, idx) => (
+                    {project.highlights.map((highlight, idx) => (
                       <li key={idx} className="flex items-start gap-2">
                         <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${project.color} mt-1.5 flex-shrink-0`}></div>
                         <p className="text-foreground leading-relaxed text-sm">{highlight}</p>
@@ -128,33 +155,6 @@ export function ProjectsSection() {
                     ))}
                   </ul>
                 </div>
-
-                {/* Links */}
-                {project.links && (
-                  <div className="flex gap-2 pt-2">
-                    {project.links.github && (
-                      <Button 
-                        size="sm" 
-                        className="bg-gradient-primary hover:shadow-glow transition-all duration-300 text-xs px-3 py-1"
-                        onClick={() => window.open(project.links.github, "_blank")}
-                      >
-                        <Github className="mr-1 h-3 w-3" />
-                        Code
-                      </Button>
-                    )}
-                    {project.links.demo && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="hover:shadow-card transition-all duration-300 text-xs px-3 py-1"
-                        onClick={() => window.open(project.links.demo, "_blank")}
-                      >
-                        <ExternalLink className="mr-1 h-3 w-3" />
-                        Demo
-                      </Button>
-                    )}
-                  </div>
-                )}
               </div>
             </Card>
           )
