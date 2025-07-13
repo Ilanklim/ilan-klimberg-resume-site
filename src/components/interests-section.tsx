@@ -17,7 +17,7 @@ export function InterestsSection() {
     <Section variant="card">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold text-foreground mb-4">Beyond Work</h2>
-        <p className="text-lg text-muted-foreground">Personal interests and languages</p>
+        
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">

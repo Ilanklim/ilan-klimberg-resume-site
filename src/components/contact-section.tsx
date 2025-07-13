@@ -66,7 +66,7 @@ export function ContactSection() {
           Let's Connect
         </h2>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Ready to discuss opportunities, collaborations, and how I can drive impact at your organization
+          Ready to chat or discuss opportunities
         </p>
       </div>
 

@@ -55,7 +55,7 @@ export function SkillsSection() {
       <div id="skills">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold text-foreground mb-4">Skills & Expertise</h2>
-        <p className="text-lg text-muted-foreground">Technical stack and domain knowledge</p>
+        
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

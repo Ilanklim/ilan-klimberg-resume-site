@@ -84,10 +84,6 @@ export function ExperienceSection() {
             Professional Experience
           </span>
         </h2>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Building innovative products and driving measurable impact across fintech, 
-          blockchain, and data analytics domains
-        </p>
       </div>
 
       <div className="space-y-8">

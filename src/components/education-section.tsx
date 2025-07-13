@@ -7,7 +7,7 @@ export function EducationSection() {
     <Section variant="card">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold text-foreground mb-4">Education</h2>
-        <p className="text-lg text-muted-foreground">Academic background and achievements</p>
+        
       </div>
 
       <Card className="p-8 shadow-elegant hover:shadow-glow transition-all duration-300">
