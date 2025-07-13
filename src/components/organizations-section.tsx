@@ -51,7 +51,7 @@ export function OrganizationsSection() {
     <Section variant="gradient">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold text-foreground mb-4">Organizations & Activities</h2>
-        
+        <p className="text-lg text-muted-foreground">Leadership roles and community involvement</p>
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

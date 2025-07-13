@@ -65,6 +65,10 @@ export function ProjectsSection() {
             Featured Projects
           </span>
         </h2>
+        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          Innovative solutions showcasing technical expertise in blockchain technology, 
+          database systems, and full-stack development
+        </p>
       </div>
 
       <div className="space-y-8">
