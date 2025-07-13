@@ -107,91 +107,93 @@ export function ExperienceSection() {
         </p>
       </div>
 
-      <div className="space-y-10">
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
         {experiences.map((exp, index) => {
           const Icon = exp.icon
           return (
             <Card 
               key={index} 
-              className="relative overflow-hidden shadow-elegant hover:shadow-glow transition-all duration-500 hover:-translate-y-2 bg-gradient-card border-0"
+              className="relative overflow-hidden shadow-elegant hover:shadow-glow transition-all duration-500 hover:-translate-y-2 bg-gradient-card border-0 h-fit"
             >
               {exp.isUpcoming && (
-                <div className="absolute top-6 right-6">
-                  <Badge className="bg-gradient-primary text-primary-foreground shadow-lg">
+                <div className="absolute top-4 right-4 z-10">
+                  <Badge className="bg-gradient-primary text-primary-foreground shadow-lg text-xs">
                     Upcoming
                   </Badge>
                 </div>
               )}
               
-              <div className="grid lg:grid-cols-3 gap-8 p-8">
+              <div className="p-6">
                 {/* Company Info */}
-                <div className="lg:col-span-1 space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className={`p-4 rounded-2xl bg-gradient-to-br ${exp.color} shadow-lg`}>
-                      <Icon className="h-8 w-8 text-white" />
+                <div className="space-y-4 mb-6">
+                  <div className="flex items-start gap-3">
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${exp.color} shadow-lg flex-shrink-0`}>
+                      <Icon className="h-6 w-6 text-white" />
                     </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-foreground mb-1">{exp.title}</h3>
-                      <p className="text-xl text-primary font-semibold mb-2">{exp.company}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 text-muted-foreground">
-                      <Calendar className="h-5 w-5" />
-                      <span className="font-medium text-lg">{exp.period}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-muted-foreground">
-                      <MapPin className="h-5 w-5" />
-                      <span className="font-medium text-lg">{exp.location}</span>
+                    <div className="min-w-0">
+                      <h3 className="text-xl font-bold text-foreground mb-1 leading-tight">{exp.title}</h3>
+                      <p className="text-lg text-primary font-semibold mb-2">{exp.company}</p>
                     </div>
                   </div>
                   
-                  <p className="text-muted-foreground leading-relaxed text-lg italic">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Calendar className="h-4 w-4" />
+                      <span className="font-medium text-sm">{exp.period}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <MapPin className="h-4 w-4" />
+                      <span className="font-medium text-sm">{exp.location}</span>
+                    </div>
+                  </div>
+                  
+                  <p className="text-muted-foreground leading-relaxed text-sm italic">
                     {exp.description}
                   </p>
-
-                  {/* Skills */}
-                  <div className="space-y-3">
-                    <h4 className="font-semibold text-foreground">Key Skills</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {exp.skills.map((skill, idx) => (
-                        <Badge 
-                          key={idx} 
-                          variant="secondary" 
-                          className="px-3 py-1 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors"
-                        >
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Company Link */}
-                  {exp.companyUrl && (
-                    <Button 
-                      size="sm" 
-                      className="bg-gradient-primary hover:shadow-glow transition-all duration-300"
-                      onClick={() => window.open(exp.companyUrl, "_blank")}
-                    >
-                      <ExternalLink className="mr-2 h-4 w-4" />
-                      Visit Company
-                    </Button>
-                  )}
                 </div>
-                
+
+                {/* Skills */}
+                <div className="space-y-2 mb-4">
+                  <h4 className="font-semibold text-foreground text-sm">Key Skills</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {exp.skills.map((skill, idx) => (
+                      <Badge 
+                        key={idx} 
+                        variant="secondary" 
+                        className="px-2 py-0.5 text-xs bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors"
+                      >
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Achievements */}
-                <div className="lg:col-span-2">
-                  <h4 className="text-xl font-bold text-foreground mb-6">Key Achievements & Impact</h4>
-                  <ul className="space-y-4">
-                    {exp.highlights.map((highlight, idx) => (
-                      <li key={idx} className="flex items-start gap-4">
-                        <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${exp.color} mt-2 flex-shrink-0 shadow-sm`}></div>
-                        <p className="text-foreground leading-relaxed text-lg">{highlight}</p>
+                <div className="mb-4">
+                  <h4 className="font-semibold text-foreground text-sm mb-3">Key Achievements</h4>
+                  <ul className="space-y-2">
+                    {exp.highlights.slice(0, 3).map((highlight, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${exp.color} mt-1.5 flex-shrink-0`}></div>
+                        <p className="text-foreground leading-relaxed text-sm">{highlight}</p>
                       </li>
                     ))}
                   </ul>
                 </div>
+
+                {/* Company Link */}
+                {exp.companyUrl && (
+                  <div className="pt-2">
+                    <Button 
+                      size="sm" 
+                      className="bg-gradient-primary hover:shadow-glow transition-all duration-300 text-xs px-3 py-1"
+                      onClick={() => window.open(exp.companyUrl, "_blank")}
+                    >
+                      <ExternalLink className="mr-1 h-3 w-3" />
+                      Visit
+                    </Button>
+                  </div>
+                )}
               </div>
             </Card>
           )

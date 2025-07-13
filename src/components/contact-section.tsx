@@ -70,35 +70,6 @@ export function ContactSection() {
         </p>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-wrap gap-4 justify-center mb-16">
-        <Button 
-          size="lg" 
-          className="bg-gradient-primary hover:shadow-glow transition-all duration-300 text-lg px-8 py-3"
-          onClick={() => window.open("mailto:idk7@cornell.edu", "_blank")}
-        >
-          <Mail className="mr-3 h-5 w-5" />
-          Email Me
-        </Button>
-        <Button 
-          variant="outline" 
-          size="lg" 
-          className="hover:shadow-card transition-all duration-300 text-lg px-8 py-3 border-primary/20 hover:border-primary/40"
-          onClick={() => window.open("https://linkedin.com/in/ilan-klim", "_blank")}
-        >
-          <Linkedin className="mr-3 h-5 w-5" />
-          LinkedIn
-        </Button>
-        <Button 
-          variant="outline" 
-          size="lg" 
-          className="hover:shadow-card transition-all duration-300 text-lg px-8 py-3 border-primary/20 hover:border-primary/40"
-          onClick={() => window.open("#", "_blank")}
-        >
-          <Download className="mr-3 h-5 w-5" />
-          Download Resume
-        </Button>
-      </div>
 
       {/* Contact Methods Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
@@ -130,30 +101,6 @@ export function ContactSection() {
         })}
       </div>
 
-      {/* Product Management Skills */}
-      <div className="mb-16">
-        <h3 className="text-3xl font-bold text-center mb-8 text-foreground">
-          Product Management Excellence
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {productSkills.map((skill, index) => {
-            const Icon = skill.icon
-            return (
-              <Card key={index} className="text-center bg-gradient-card shadow-card hover:shadow-elegant transition-all duration-300 hover:-translate-y-1">
-                <CardHeader>
-                  <div className="mx-auto p-3 rounded-full bg-primary/10 text-primary mb-4">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <CardTitle className="text-lg">{skill.title}</CardTitle>
-                  <CardDescription className="text-sm leading-relaxed">
-                    {skill.description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            )
-          })}
-        </div>
-      </div>
 
       {/* Contact Info Footer */}
       <div className="text-center pt-8 border-t border-border/50">
