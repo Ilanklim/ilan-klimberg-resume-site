@@ -4,9 +4,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar, ExternalLink, Github, Users } from "lucide-react"
 
-interface Project {
+interface Experience {
   title: string
-  type: "project" | "experience"
   date: string
   description: string
   details: string[]
@@ -20,42 +19,9 @@ interface Project {
   company?: string
 }
 
-const projects: Project[] = [
-  {
-    title: "Database Management System Project",
-    type: "project",
-    date: "Mar 2024 – May 2024",
-    description: "Implemented a complete database management system in OCaml with full CRUD operations and query processing.",
-    details: [
-      "Built comprehensive parser and lexer for SQL-like query language",
-      "Designed and implemented database structure representation with efficient data storage",
-      "Created intuitive user interface for database interactions",
-      "Implemented query optimization and indexing for improved performance"
-    ],
-    skills: ["OCaml", "Functional Programming", "Parser", "Lexer", "Database Systems", "SQL"],
-    links: {
-      github: "https://github.com/cejiogu/dbms_project"
-    }
-  },
-  {
-    title: "Cornell Blockchain Website",
-    type: "project", 
-    date: "Nov 2023 – Jan 2024",
-    description: "Developed a responsive website from scratch for Cornell Blockchain with modern UI components and mobile-first design.",
-    details: [
-      "Built responsive website using HTML, CSS, and JavaScript with no frameworks",
-      "Implemented interactive modals, dropdowns, and carousel elements",
-      "Focused on mobile-first design approach for optimal user experience",
-      "Collaborated with design team to create cohesive brand experience"
-    ],
-    skills: ["HTML", "CSS", "JavaScript", "Responsive Design", "UI/UX"],
-    links: {
-      github: "https://github.com/Ilanklim/Cornell-Blockchain-Website"
-    }
-  },
+const projects: Experience[] = [
   {
     title: "Associate Product Manager Intern",
-    type: "experience",
     company: "Coinbase",
     date: "May – Aug 2025",
     description: "Selected as 1 of 17 from 10,000+ applicants for Coinbase's prestigious APM internship program.",
@@ -71,7 +37,6 @@ const projects: Project[] = [
   },
   {
     title: "Founder",
-    type: "experience",
     company: "KBCrypto",
     date: "Feb 2025 – Present",
     description: "Founded blockchain and crypto consulting firm educating high-net-worth individuals.",
@@ -88,7 +53,6 @@ const projects: Project[] = [
   },
   {
     title: "Co-Founder & Product Manager",
-    type: "experience", 
     company: "Silicore.io",
     date: "Jun 2024 – Present",
     description: "Co-founded cryptocurrency exchange directory focused on building trust in the crypto ecosystem.",
@@ -105,7 +69,6 @@ const projects: Project[] = [
   },
   {
     title: "Finance & Data Analytics Intern",
-    type: "experience",
     company: "ARB Interactive", 
     date: "May – Aug 2024",
     description: "Built data analytics infrastructure and conducted market analysis at unicorn iGaming startup.",
@@ -146,13 +109,13 @@ export function ProjectsExperienceSection() {
               {/* Left Column - Header Info */}
               <div className="lg:w-1/3">
                 <div className="flex items-start gap-3 mb-4">
-                  {project.type === "experience" && (
+                  {/* {project.type === "experience" && (
                     <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-bold text-sm">
                         {project.company?.charAt(0) || project.title.charAt(0)}
                       </span>
                     </div>
-                  )}
+                  )} */}
                   <div>
                     <h3 className="text-xl font-bold text-foreground mb-1">
                       {project.title}

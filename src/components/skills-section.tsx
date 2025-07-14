@@ -21,7 +21,7 @@ const skillCategories: SkillCategory[] = [
     title: "Data Science",
     icon: Database,
     color: "bg-green-500",
-    skills: ["SQL Analytics", "Metabase", "Financial KPIs", "Data Visualization", "Causal Inference"]
+    skills: ["SQL Analytics", "Metabase", "Data Visualization", "Causal Inference"]
   },
   {
     title: "UI/UX",
@@ -33,13 +33,13 @@ const skillCategories: SkillCategory[] = [
     title: "Web Development",
     icon: Globe,
     color: "bg-orange-500",
-    skills: ["Full-Stack", "AngularJS", "C#", "API Development", "SEO Optimization", "Google Tag Manager"]
+    skills: ["React", "AngularJS", "C#", "API Development", "SEO Optimization", "Google Tag Manager"]
   },
   {
     title: "Blockchain",
     icon: Blocks,
     color: "bg-indigo-500",
-    skills: ["Cryptocurrency", "DeFi", "Smart Contracts", "Blockchain Consulting", "Crypto Education"]
+    skills: ["Cryptocurrency", "Liquidity Pools", "Cryptocurrency", "DeFi", "Education"]
   },
   {
     title: "Business",
