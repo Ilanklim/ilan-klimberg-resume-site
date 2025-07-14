@@ -96,7 +96,7 @@ export function ExperienceSection() {
           return (
             <Card 
               key={index} 
-              className="overflow-hidden shadow-elegant hover:shadow-glow transition-all duration-500 hover:-translate-y-1 bg-gradient-card border-0"
+              className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2 bg-gradient-card border border-border/50 rounded-xl"
             >
               <div className="grid lg:grid-cols-4 gap-6 p-6">
                 {/* Company Info */}

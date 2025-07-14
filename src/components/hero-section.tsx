@@ -16,8 +16,12 @@ export function HeroSection() {
         <div className="text-center animate-fade-in">
           {/* Profile Section */}
           <div className="mb-8">
-            <div className="w-32 h-32 mx-auto mb-6 bg-gradient-primary rounded-full flex items-center justify-center shadow-elegant">
-              <span className="text-white text-4xl font-bold">IK</span>
+            <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden shadow-elegant ring-4 ring-primary/20">
+              <img 
+                src="/lovable-uploads/69da4a92-5c6e-4971-89ae-9185a82ad37f.png" 
+                alt="Ilan Klimberg - Professional Photo"
+                className="w-full h-full object-cover"
+              />
             </div>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground mb-4">
               Ilan Klimberg
