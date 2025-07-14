@@ -1,7 +1,6 @@
 import { Section } from "@/components/ui/section"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Mail, Phone, Calendar, Github, Linkedin, Download, Users, MessageSquare, Briefcase, Target } from "lucide-react"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Mail, Calendar, Github, Linkedin } from "lucide-react"
 
 const contactMethods = [
   {
@@ -10,14 +9,14 @@ const contactMethods = [
     description: "Book a time that works for you",
     icon: Calendar,
     isPrimary: true,
-    action: () => window.open("https://cal.com/ilan-klim", "_blank")
+    action: () => window.open("https://cal.com/ilan-klimberg", "_blank")
   },
   {
     id: "linkedin",
     title: "LinkedIn",
     description: "Connect professionally",
     icon: Linkedin,
-    action: () => window.open("https://linkedin.com/in/ilan-klim", "_blank")
+    action: () => window.open("https://linkedin.com/in/ilan-klimberg", "_blank")
   },
   {
     id: "github",
@@ -31,30 +30,7 @@ const contactMethods = [
     title: "Email",
     description: "Send me a message",
     icon: Mail,
-    action: () => window.open("mailto:idk7@cornell.edu", "_blank")
-  }
-]
-
-const productSkills = [
-  {
-    icon: Users,
-    title: "Leadership",
-    description: "Led cross-functional teams and managed stakeholder relationships"
-  },
-  {
-    icon: MessageSquare,
-    title: "Communication",
-    description: "Excellent written and verbal communication with technical and business teams"
-  },
-  {
-    icon: Briefcase,
-    title: "Strategy",
-    description: "Developed go-to-market strategies and product roadmaps"
-  },
-  {
-    icon: Target,
-    title: "Execution",
-    description: "Delivered products from concept to launch with measurable impact"
+    action: () => window.open("mailto:ilanklimberg@gmail.com", "_blank")
   }
 ]
 

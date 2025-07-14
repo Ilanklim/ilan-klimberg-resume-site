@@ -28,7 +28,7 @@ const organizations: OrganizationItem[] = [
     location: "Ithaca, NY",
     period: "Nov 2023 – May 2024",
     description: [
-      "Raised over $3.2 million in funding for incubated companies",
+      "Raised over $15 million in funding for incubated companies",
       "Recruited speakers, reviewed pitch decks, and initiated VC meetings for startups",
       "Merged with the Initiative of Cryptocurrencies and Contracts (IC3) as its official accelerator"
     ],

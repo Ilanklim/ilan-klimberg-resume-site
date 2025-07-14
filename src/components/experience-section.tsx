@@ -32,7 +32,7 @@ const experiences: Experience[] = [
       "Led comprehensive marketing campaign with weekly LinkedIn content and website articles, achieving 1,000+ monthly visitors",
       "Developed personalized content strategies based on user analytics and engagement metrics"
     ],
-    skills: ["Blockchain Technology", "SEO Optimization", "Content Marketing", "Business Development", "Analytics"],
+    skills: ["Blockchain", "SEO Optimization", "Business Development", "Analytics"],
     companyUrl: "https://www.kbcrypto.io",
     icon: Blocks,
     color: "from-green-500 to-emerald-600"
@@ -68,7 +68,7 @@ const experiences: Experience[] = [
       "Conducted market research to identify acquisition targets, mapped competitive landscape, and compiled EBITDA multiples",
       "Analysis directly contributed to successful 6-figure acquisition of gaming company"
     ],
-    skills: ["SQL", "Data Analytics", "Financial Modeling", "Market Research", "Frontend Optimization"],
+    skills: ["React", "SQL", "Data Analytics", "Financial Modeling", "Frontend Optimization"],
     companyUrl: "https://www.arbinteractive.com",
     icon: Users,
     color: "from-purple-500 to-indigo-600"

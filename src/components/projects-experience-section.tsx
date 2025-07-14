@@ -32,7 +32,7 @@ const projects: Project[] = [
       "Created intuitive user interface for database interactions",
       "Implemented query optimization and indexing for improved performance"
     ],
-    skills: ["OCaml", "Functional Programming", "Parser Design", "Database Systems", "UI Development"],
+    skills: ["OCaml", "Functional Programming", "Parser", "Lexer", "Database Systems", "SQL"],
     links: {
       github: "https://github.com/cejiogu/dbms_project"
     }
@@ -48,7 +48,7 @@ const projects: Project[] = [
       "Focused on mobile-first design approach for optimal user experience",
       "Collaborated with design team to create cohesive brand experience"
     ],
-    skills: ["HTML", "CSS", "JavaScript", "Responsive Design", "Mobile-First", "UI/UX"],
+    skills: ["HTML", "CSS", "JavaScript", "Responsive Design", "UI/UX"],
     links: {
       github: "https://github.com/Ilanklim/Cornell-Blockchain-Website"
     }

@@ -36,9 +36,9 @@ export function HeroSection() {
               <Phone className="h-4 w-4" />
               <span>+1 305-502-0995</span>
             </a>
-            <a href="mailto:idk7@cornell.edu" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+            <a href="mailto:ilanklimberg@gmail.com" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
               <Mail className="h-4 w-4" />
-              <span>idk7@cornell.edu</span>
+              <span>ilanklimberg@gmail.com</span>
             </a>
             <a href="https://www.linkedin.com/in/ilanklimberg" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
               <Linkedin className="h-4 w-4" />
