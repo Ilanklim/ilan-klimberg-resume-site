@@ -37,10 +37,10 @@ export function HeroSection() {
           
           {/* Contact Links */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 text-sm">
-            <a href="tel:+13055020995" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+            {/* <a href="tel:+13055020995" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
               <Phone className="h-4 w-4" />
               <span>+1 305-502-0995</span>
-            </a>
+            </a> */}
             <a href="mailto:ilanklimberg@gmail.com" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
               <Mail className="h-4 w-4" />
               <span>ilanklimberg@gmail.com</span>
