@@ -8,17 +8,17 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 248 250 252;
+    --background: 210 40% 98%;
     --foreground: 203 24% 12%;
 
-    --card: 255 255 255;
+    --card: 0 0% 100%;
     --card-foreground: 203 24% 12%;
 
-    --popover: 255 255 255;
+    --popover: 0 0% 100%;
     --popover-foreground: 203 24% 12%;
 
     --primary: 214 84% 56%;
-    --primary-foreground: 255 255 255;
+    --primary-foreground: 0 0% 100%;
     --primary-glow: 214 84% 70%;
     
     /* Additional color tokens for variety */
@@ -29,19 +29,19 @@ All colors MUST be HSL.
     --info: 199 89% 48%;
     --info-foreground: 355 100% 97%;
 
-    --secondary: 241 245 249;
+    --secondary: 210 40% 96%;
     --secondary-foreground: 203 24% 12%;
 
-    --muted: 241 245 249;
+    --muted: 210 40% 96%;
     --muted-foreground: 203 24% 40%;
 
-    --accent: 233 246 255;
+    --accent: 210 40% 98%;
     --accent-foreground: 214 84% 56%;
 
     /* Professional gradients */
     --gradient-primary: linear-gradient(135deg, hsl(214, 84%, 56%), hsl(214, 84%, 70%));
-    --gradient-subtle: linear-gradient(180deg, hsl(248, 250, 252), hsl(241, 245, 249));
-    --gradient-card: linear-gradient(145deg, hsl(255, 255, 255), hsl(248, 250, 252));
+    --gradient-subtle: linear-gradient(180deg, hsl(210, 40%, 98%), hsl(210, 40%, 96%));
+    --gradient-card: linear-gradient(145deg, hsl(0, 0%, 100%), hsl(210, 40%, 98%));
     --gradient-success: linear-gradient(135deg, hsl(142, 76%, 36%), hsl(142, 76%, 50%));
     --gradient-warning: linear-gradient(135deg, hsl(32, 95%, 44%), hsl(32, 95%, 58%));
     --gradient-info: linear-gradient(135deg, hsl(199, 89%, 48%), hsl(199, 89%, 62%));
@@ -85,20 +85,20 @@ All colors MUST be HSL.
 
   .dark {
     --background: 203 24% 8%;
-    --foreground: 241 245 249;
+    --foreground: 210 40% 96%;
 
     --card: 203 24% 10%;
-    --card-foreground: 241 245 249;
+    --card-foreground: 210 40% 96%;
 
     --popover: 203 24% 10%;
-    --popover-foreground: 241 245 249;
+    --popover-foreground: 210 40% 96%;
 
     --primary: 214 84% 70%;
     --primary-foreground: 203 24% 8%;
     --primary-glow: 214 84% 80%;
 
     --secondary: 203 24% 12%;
-    --secondary-foreground: 241 245 249;
+    --secondary-foreground: 210 40% 96%;
 
     --muted: 203 24% 12%;
     --muted-foreground: 203 24% 60%;
