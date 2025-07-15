@@ -139,7 +139,7 @@ All colors MUST be HSL.
   }
 
   body {
-    background: #f8fafc !important;
+    @apply bg-background text-foreground;
   }
 }
 
