@@ -24,7 +24,12 @@ export function HeroSection() {
             <p className="text-xl sm:text-2xl text-primary font-semibold mb-4">
               Computer Science Student & Blockchain Entrepreneur
             </p>
-            <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">Cornell CIS student passionate about blockchain, fintech, and building innovative solutions. Co-founder with proven track record in fundraising, product management, and technical development.</p>
+            <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+              Cornell CIS student passionate about blockchain, fintech, and building innovative solutions. 
+              Co-founder with proven track record in <a href="#experience" className="text-primary hover:underline">fundraising and product management</a>, 
+              specializing in <a href="#skills" className="text-primary hover:underline">full-stack development</a> and 
+              <a href="#projects" className="text-primary hover:underline">blockchain technology</a>.
+            </p>
           </div>
 
           {/* Smart Search Bar */}
@@ -53,10 +58,10 @@ export function HeroSection() {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-gradient-primary hover:shadow-glow transition-all duration-300" onClick={() => scrollToSection('experience')}>
-              View My Work
+              View My Professional Experience
             </Button>
-            <Button variant="outline" size="lg" className="hover:shadow-card transition-all duration-300">
-              Download Resume
+            <Button variant="outline" size="lg" className="hover:shadow-card transition-all duration-300" onClick={() => scrollToSection('projects')}>
+              Explore My Projects
             </Button>
           </div>
         </div>
