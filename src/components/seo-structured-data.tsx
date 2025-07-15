@@ -7,7 +7,7 @@ export function SEOStructuredData() {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Ilan Klimberg Portfolio",
-      "url": "https://yourdomain.com",
+      "url": "https://ilanklimberg.com",
       "description": "Professional portfolio of Ilan Klimberg - Cornell CS student, blockchain entrepreneur, and incoming Coinbase APM intern.",
       "author": {
         "@type": "Person",
@@ -15,7 +15,7 @@ export function SEOStructuredData() {
       },
       "mainEntity": {
         "@type": "Person",
-        "@id": "https://yourdomain.com/#person"
+        "@id": "https://ilanklimberg.com/#person"
       }
     };
 
@@ -25,12 +25,12 @@ export function SEOStructuredData() {
       "@type": "ProfilePage",
       "mainEntity": {
         "@type": "Person",
-        "@id": "https://yourdomain.com/#person",
+        "@id": "https://ilanklimberg.com/#person",
         "name": "Ilan Klimberg",
         "alternateName": "Ilan Klim",
         "description": "Cornell Computer Science student, blockchain entrepreneur, and incoming Coinbase APM intern with expertise in full-stack development and fintech.",
-        "url": "https://yourdomain.com",
-        "image": "https://yourdomain.com/lovable-uploads/69da4a92-5c6e-4971-89ae-9185a82ad37f.png",
+        "url": "https://ilanklimberg.com",
+        "image": "https://ilanklimberg.com/lovable-uploads/69da4a92-5c6e-4971-89ae-9185a82ad37f.png",
         "sameAs": [
           "https://linkedin.com/in/ilan-klimberg",
           "https://github.com/ilan-klim",
@@ -85,7 +85,7 @@ export function SEOStructuredData() {
       "founder": {
         "@type": "Person",
         "name": "Ilan Klimberg",
-        "@id": "https://yourdomain.com/#person"
+        "@id": "https://ilanklimberg.com/#person"
       },
       "description": "Blockchain and cryptocurrency focused company founded by Ilan Klimberg"
     };
