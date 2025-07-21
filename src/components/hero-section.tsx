@@ -26,9 +26,7 @@ export function HeroSection() {
             </p>
             <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
               Cornell CIS student passionate about blockchain, fintech, and building innovative solutions. 
-              Co-founder with proven track record in <a href="#experience" className="text-primary hover:underline">fundraising and product management</a>, 
-              specializing in <a href="#skills" className="text-primary hover:underline">full-stack development</a> and 
-              <a href="#projects" className="text-primary hover:underline">blockchain technology</a>.
+              Co-founder with proven track record in software engineering, crypto, and product management.
             </p>
           </div>
 

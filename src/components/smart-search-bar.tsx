@@ -122,7 +122,8 @@ export function SmartSearchBar() {
           <Button 
             onClick={handleSearch}
             disabled={isSearching}
-            className="bg-gradient-primary hover:shadow-glow transition-all duration-300"
+            className="bg-gradient-primary hover:shadow-glow transition-all duration-300 h-full px-6 py-3 rounded-lg"
+            style={{ minHeight: '48px' }}
           >
             {isSearching ? (
               <Loader2 className="h-4 w-4 animate-spin" />
