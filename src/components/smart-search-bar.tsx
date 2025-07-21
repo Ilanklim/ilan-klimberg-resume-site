@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Search, Sparkles, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { API_BASE_URL } from "@/lib/api";
 
 interface SearchResponse {
   question: string
@@ -12,8 +13,6 @@ interface SearchResponse {
   }>
   success: boolean
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export function SmartSearchBar() {
   const [query, setQuery] = useState("")
