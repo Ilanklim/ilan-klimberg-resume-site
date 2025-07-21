@@ -1,0 +1,135 @@
+{
+  "name": "Ilan Klimberg",
+  "contact": {
+    "email": "idk7@cornell.edu",
+    "GitHub": "https://github.com/Ilanklim",
+    "linkedin": "https://www.linkedin.com/in/ilanklimberg/"
+  },
+  "education": [
+    {
+      "institution": "Cornell University",
+      "location": "Ithaca, NY",
+      "degree": "Bachelor of Science in Computer and Information Science",
+      "dates": "Aug 2022 \u2013 May 2026",
+      "gpa": "3.7/4.0",
+      "honors": [
+        "Dean\u2019s List (All Semesters)"
+      ],
+      "coursework": [
+        "Functional Programming",
+        "Object-Oriented Programming and Data Structures",
+        "Causal Inference"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "company": "Coinbase",
+      "role": "Associate Product Manager Intern",
+      "location": "San Francisco, CA",
+      "dates": "May \u2013 Aug 2025",
+      "description": "Largest American crypto exchange",
+      "highlights": [
+        "Chosen as 1 of 17 from 10,000+ applicants for Coinbase's APM internship program"
+      ]
+    },
+    {
+      "company": "KBCrypto",
+      "role": "Founder",
+      "location": "Madrid, Spain",
+      "dates": "Feb 2025 \u2013 Present",
+      "description": "Blockchain and crypto consulting firm",
+      "highlights": [
+        "Educated high-net-worth individuals on blockchain & crypto, generating $10,000+ in revenue",
+        "Optimized SEO and integrated Google Tag Manager to track and personalize content",
+        "Led marketing campaign including weekly LinkedIn posts and articles, generating 1,000+ monthly views"
+      ]
+    },
+    {
+      "company": "Silicore.io",
+      "role": "Co-Founder & Product Manager",
+      "location": "Miami, FL",
+      "dates": "Jun 2024 \u2013 Present",
+      "description": "Cryptocurrency exchange directory building trust in crypto",
+      "highlights": [
+        "Secured $32,000 in funding after successful pitch to Stellar Community Fund",
+        "Developed GTM strategy, pricing, architecture, and user journeys",
+        "Selected speaker at Stellar Meridian 2024 in London",
+        "Pivoted Silicore into Cornell Blockchain project team after market insights"
+      ]
+    },
+    {
+      "company": "ARB Interactive",
+      "role": "Finance & Data Analytics Intern",
+      "location": "Miami, FL",
+      "dates": "May \u2013 Aug 2024",
+      "description": "Unicorn startup focused on iGaming",
+      "highlights": [
+        "Built SQL dashboard in Metabase for CFO with automated updates",
+        "Wrote 30+ SQL queries across teams, increasing Metabase traffic by 22%",
+        "Refactored frontend file structure to reduce onboarding time by 40%",
+        "Identified acquisition targets, mapped competitors, and supported 6-figure M&A deal"
+      ]
+    },
+    {
+      "company": "Creatrify",
+      "role": "Software Engineering Intern",
+      "location": "Los Angeles, CA (Remote)",
+      "dates": "Jun \u2013 Sept 2023",
+      "description": "Platform enhancing the creator-fan experience",
+      "highlights": [
+        "Used SQL, C#, AngularJS to enhance digital goods access experience",
+        "Boosted feature speed 24x by reducing API calls",
+        "Implemented creator search functionality"
+      ]
+    }
+  ],
+  "organizations": [
+    {
+      "name": "Cornell Blockchain Club",
+      "roles": [
+        {
+          "title": "Head of Education",
+          "dates": "Jan \u2013 Dec 2024",
+          "location": "Ithaca, NY",
+          "highlights": [
+            "Taught CS 1998 Intro to Blockchain",
+            "Led 6 TAs and launched labs on wallets, NFTs, and DEXs"
+          ]
+        },
+        {
+          "title": "Accelerator Member",
+          "dates": "Nov 2023 \u2013 May 2024",
+          "highlights": [
+            "Helped raise over $15M in startup funding",
+            "Recruited speakers, reviewed decks, initiated VC meetings",
+            "Merged with IC3 as official accelerator"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cornell CALS Academic Integrity Hearing Board",
+      "title": "Board Member",
+      "dates": "Sept 2023 \u2013 Present",
+      "location": "Ithaca, NY",
+      "highlights": [
+        "Advise on academic integrity cases and make recommendations to CALS Dean"
+      ]
+    }
+  ],
+  "additional_information": {
+    "interests": [
+      "Miami Heat",
+      "Catan",
+      "Ping Pong",
+      "Podcasts",
+      "FIFA",
+      "Fencing"
+    ],
+    "languages": {
+      "Spanish": "Native",
+      "Hebrew": "Intermediate"
+    }
+  }
+}
