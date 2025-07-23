@@ -1,87 +1,76 @@
-# Ilan Klimberg - Resume Website
+# Ilan Klimberg - Portfolio Website
 
-A modern, responsive resume website built with React, TypeScript, and Tailwind CSS, featuring an AI-powered smart search system.
+A modern, responsive portfolio website built with React, TypeScript, and Tailwind CSS, featuring an AI-powered RAG (Retrieval-Augmented Generation) chatbot for interactive resume queries.
 
-## 🚀 Features
+## Features
 
-- **Modern UI**: Clean, responsive design with smooth animations
-- **AI-Powered Search**: Ask questions about my experience using RAG (Retrieval-Augmented Generation)
-- **Smart Highlighting**: Relevant sections are highlighted when you ask questions
-- **Real-time Responses**: Powered by Google Gemini AI
-- **Analytics**: Track popular questions and usage patterns
-- **Mobile Optimized**: Works perfectly on all devices
+- **Interactive AI Chatbot**: Ask questions about my experience, skills, and background
+- **Vector Search**: Powered by Gemini embeddings and Supabase vector database
+- **Modern Stack**: React, TypeScript, Tailwind CSS, Vite
+- **Responsive Design**: Optimized for all devices
+- **SEO Optimized**: Structured data, meta tags, and sitemap
 
-## 🧠 AI Features
-
-The website includes a sophisticated RAG system that allows visitors to ask questions about my experience:
-
-- **Natural Language Queries**: "What's your blockchain experience?" or "Tell me about your internships"
-- **Intelligent Responses**: AI generates contextual answers based on my resume
-- **Source Attribution**: See which resume sections were used to answer your question
-- **Section Highlighting**: Relevant parts of the resume are highlighted automatically
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **React 18** with TypeScript
-- **Vite** for fast development and building
-- **Tailwind CSS** for styling
-- **ShadCN/UI** for components
-- **Radix UI** for accessible primitives
-
-### Backend (RAG System)
-- **Node.js** with Express
-- **Google Gemini AI** for embeddings and LLM
-- **Supabase** with pgvector for vector storage
-- **LangChain** for RAG orchestration
-
-### AI/ML
-- **Gemini Embedding-001** for text embeddings
-- **Gemini Pro** for answer generation
-- **Vector Similarity Search** for document retrieval
-
-## 🚀 Quick Start
+## Development Setup
 
 ### Prerequisites
-- Node.js 18+
-- Google AI API Key
-- Supabase Account
 
-### Installation
+- Node.js 18+ 
+- Vercel CLI (for local development)
+- Supabase account and project
 
-1. **Clone and install dependencies**
+### Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```bash
+# Google AI API Key (Get from https://makersuite.google.com/app/apikey)
+GOOGLE_AI_API_KEY=your_google_ai_api_key
+
+# Supabase Configuration (Get from your Supabase project settings)
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Optional: Enable detailed logging
+DEBUG=true
+```
+
+### Local Development
+
+1. **Install dependencies:**
    ```bash
-   git clone <repository-url>
-   cd ilan-klimberg-resume-site
    npm install
    ```
 
-2. **Set up environment variables**
+2. **Install Vercel CLI:**
    ```bash
-   cp env.example .env
-   # Edit .env with your API keys
+   npm i -g vercel
    ```
 
-3. **Set up Supabase**
-   - Create a Supabase project
-   - Run the SQL setup from `RAG_SETUP_GUIDE.md`
-   - Add your Supabase credentials to `.env`
-
-4. **Initialize the RAG system**
+3. **Run with Vercel Dev (Recommended):**
    ```bash
-   # Start the backend server
-   npm run dev:server
-   
-   # In another terminal, initialize the RAG system
-   npm run setup:rag
+   vercel dev
    ```
+   This starts both the frontend and API routes in development mode.
 
-5. **Start the frontend**
+4. **Alternative - Frontend only:**
    ```bash
    npm run dev
    ```
+   Note: API routes won't work without Vercel Dev.
 
-Visit `http://localhost:5173` to see your AI-powered resume!
+### API Endpoints
+
+The application provides several API endpoints:
+
+- `GET /api/health` - Health check endpoint
+- `POST /api/query` - Process chatbot queries using RAG
+- `POST /api/setup` - Initialize the RAG system and embed resume data
+- `GET /api/setup` - Check RAG system status
+- `GET /api/analytics` - Get chat analytics and statistics
+
+### Database Setup
+
+The application automatically sets up the required Supabase tables and vector functions when you first run the setup endpoint. Make sure your Supabase project has the pgvector extension enabled.
 
 ## 📁 Project Structure
 
