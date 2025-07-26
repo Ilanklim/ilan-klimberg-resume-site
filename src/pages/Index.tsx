@@ -1,3 +1,4 @@
+import React from "react"
 import { HeroSection } from "@/components/hero-section"
 import { EducationSection } from "@/components/education-section"
 import { SkillsSection } from "@/components/skills-section"
@@ -11,7 +12,7 @@ import { SmartSearchBar } from "@/components/smart-search-bar"
 import { AuthStatus } from "@/components/auth-status"
 import { Section } from "@/components/ui/section";
 
-const Index = () => {
+const Index: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOStructuredData />
