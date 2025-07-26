@@ -8,8 +8,7 @@ import { OrganizationsSection } from "@/components/organizations-section"
 import { InterestsSection } from "@/components/interests-section"
 import { ContactSection } from "@/components/contact-section"
 import { SEOStructuredData } from "@/components/seo-structured-data"
-import { SmartSearchBar } from "@/components/smart-search-bar"
-import { AuthStatus } from "@/components/auth-status"
+import { AnonymousSearchBar } from "@/components/anonymous-search-bar"
 import { Section } from "@/components/ui/section";
 
 const Index: React.FC = () => {
@@ -17,10 +16,7 @@ const Index: React.FC = () => {
     <div className="min-h-screen bg-background">
       <SEOStructuredData />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="flex justify-end mb-4">
-          <AuthStatus />
-        </div>
-        <SmartSearchBar />
+        <AnonymousSearchBar />
       </div>
       <HeroSection />
       <Section id="education">

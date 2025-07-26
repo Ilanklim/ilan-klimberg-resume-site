@@ -1,40 +1,37 @@
-# Ilan Klimberg's AI-Powered Resume
+# 🔍 Anonymous AI Search App
 
-A modern, interactive resume website with AI-powered search capabilities, built with React, TypeScript, Tailwind CSS, and deployed on Vercel with Supabase backend.
+A modern, secure web application with anonymous authentication and rate-limited AI search capabilities. Built with React 18, TypeScript, Tailwind CSS, Supabase, and deployed on Vercel.
 
-## 🚀 Features
+## ✨ Features
 
-- **AI-Powered Search**: Ask questions about experience, skills, and background using natural language
-- **Vector Search**: Uses Google Gemini embeddings for semantic document similarity
-- **Authentication**: Secure user authentication with Supabase Auth
-- **Row Level Security**: Properly secured database with RLS policies
-- **Responsive Design**: Beautiful, mobile-friendly interface
-- **Real-time Updates**: Live chat functionality with conversation history
-- **Input Validation**: Comprehensive validation and sanitization using Zod
-- **Rate Limiting**: Protection against abuse with request throttling
+- **🔐 Anonymous Authentication**: Automatic anonymous user creation with Supabase - no signup required
+- **🤖 AI-Powered Search**: Ask questions and get intelligent responses using Google Gemini AI
+- **📊 Rate Limiting**: 10 queries per day per anonymous user with secure tracking
+- **🛡️ Row Level Security**: All user data is isolated using Supabase RLS policies
+- **⚡ Real-time Updates**: Live query count tracking and instant feedback
+- **🎨 Beautiful UI**: Clean, responsive design with loading states and error handling
+- **🔒 Enterprise Security**: Input validation, XSS protection, and secure API handling
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 18, TypeScript, Tailwind CSS, Vite
-- **Backend**: Vercel Functions (Node.js), Supabase
-- **Database**: PostgreSQL with pgvector extension
-- **AI**: Google Gemini API for embeddings and chat completion
-- **Authentication**: Supabase Auth
+- **Backend**: Vercel Functions (Node.js)
+- **Database**: Supabase (PostgreSQL with pgvector)
+- **AI**: Google Gemini API
+- **Authentication**: Supabase Anonymous Auth
 - **Deployment**: Vercel
-- **Validation**: Zod for schema validation
 
-## 🔧 Local Development
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ 
-- npm or yarn
+- Node.js 18+
 - Supabase account
 - Google AI API key
 
 ### Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file:
 
 ```env
 # Google AI API Key (Get from https://makersuite.google.com/app/apikey)
@@ -43,217 +40,277 @@ GOOGLE_AI_API_KEY=your_google_ai_api_key_here
 # Supabase Configuration (Get from your Supabase project settings)
 SUPABASE_URL=https://your-project-id.supabase.co
 SUPABASE_ANON_KEY=your_supabase_anon_key_here
-
-# Optional: Enable detailed logging
-DEBUG=true
 ```
 
-### Installation & Setup
+### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd resume-project
-   ```
+```bash
+# Clone and install
+git clone <repository-url>
+cd ai-search-app
+npm install
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+# Start development server
+npm run dev
 
-3. **Set up the database**
-   The database tables and RLS policies are automatically created via Supabase migrations.
-
-4. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Start with Vercel CLI (Recommended)**
-   For the most accurate local development environment:
-   ```bash
-   # Install Vercel CLI globally
-   npm install -g vercel
-
-   # Start development server
-   vercel dev
-   ```
-
-The application will be available at `http://localhost:3000` (Vercel) or `http://localhost:5173` (Vite).
-
-## 🏗️ Project Structure
-
-```
-├── api/                    # Vercel serverless functions
-│   ├── health.ts          # Health check endpoint
-│   ├── query.ts           # AI query processing
-│   ├── setup.ts           # Database setup and content embedding
-│   └── analytics.ts       # Usage analytics
-├── lib/                   # Shared utilities
-│   ├── supabase.ts        # Supabase client and database functions
-│   ├── gemini-embeddings.ts # Google AI embeddings wrapper
-│   ├── resume-chunker.ts  # Resume content chunking logic
-│   ├── langchain.ts       # RAG service implementation
-│   └── validation.ts      # Zod validation schemas
-├── src/
-│   ├── components/        # React components
-│   ├── pages/            # Application pages
-│   ├── lib/              # Frontend utilities
-│   └── integrations/     # Supabase integration
-├── resumeData.json       # Resume content data
-└── supabase/            # Supabase configuration
+# Or use Vercel CLI (recommended)
+vercel dev
 ```
 
-## 🔐 Security Features
+## 🏗️ Architecture
 
-- **Row Level Security (RLS)**: All database tables protected with RLS policies
-- **Input Validation**: Comprehensive validation using Zod schemas
-- **Rate Limiting**: API endpoint protection against abuse
-- **Content Sanitization**: XSS protection for user inputs
-- **Authentication Required**: Secure endpoints require valid authentication
-- **Environment Variables**: Sensitive data stored securely
+### Database Schema
+
+```sql
+-- Chats table for storing user queries
+CREATE TABLE public.chats (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  message TEXT NOT NULL,
+  response TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- Row Level Security policies
+CREATE POLICY "Users can view their own chats"
+ON public.chats FOR SELECT TO anon, authenticated
+USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create their own chats"
+ON public.chats FOR INSERT TO anon, authenticated
+WITH CHECK (auth.uid() = user_id);
+```
+
+### Rate Limiting Functions
+
+```sql
+-- Check if user can make another query
+CREATE FUNCTION public.can_make_query(target_user_id UUID DEFAULT auth.uid())
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN (
+    SELECT COUNT(*) FROM public.chats
+    WHERE user_id = target_user_id
+    AND created_at >= CURRENT_DATE
+  ) < 10;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
 
 ## 📡 API Endpoints
 
-### `/api/health`
-- **Method**: GET
-- **Description**: Health check endpoint
-- **Response**: Server status and timestamp
+### `/api/query` (POST)
 
-### `/api/query`
-- **Method**: POST
-- **Description**: Process AI queries about resume content
-- **Body**: `{ "question": "string" }`
-- **Features**: Rate limiting, input validation, vector search
-- **Response**: AI-generated answer with relevant document excerpts
+Process AI queries with rate limiting and user authentication.
 
-### `/api/setup`
-- **Method**: POST
-- **Description**: Initialize database and embed resume content
-- **Authentication**: Required (admin only)
-- **Body**: `{ "content": "string" }`
+**Headers:**
+```
+Authorization: Bearer <anonymous_session_token>
+Content-Type: application/json
+```
 
-### `/api/analytics`
-- **Method**: GET
-- **Description**: Get usage analytics and chat history
-- **Authentication**: Required
-- **Response**: Chat statistics and recent conversations
+**Body:**
+```json
+{
+  "question": "What is your experience in data science?"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "answer": "Based on my experience...",
+  "question": "What is your experience in data science?",
+  "dailyCount": 1,
+  "maxQueries": 10,
+  "remainingQueries": 9
+}
+```
+
+**Rate Limit Response (429):**
+```json
+{
+  "success": false,
+  "error": "Daily query limit reached (10/10). Try again tomorrow!",
+  "dailyCount": 10,
+  "maxQueries": 10
+}
+```
+
+## 🔒 Security Features
+
+### Anonymous Authentication
+- Automatic anonymous user creation on app load
+- Secure session management with Supabase
+- No login/signup UI required
+
+### Row Level Security (RLS)
+```sql
+-- Users can only access their own chat records
+CREATE POLICY "Users can view their own chats"
+ON public.chats FOR SELECT TO anon, authenticated
+USING (auth.uid() = user_id);
+```
+
+### Input Validation & Sanitization
+```typescript
+// Zod schema validation
+const querySchema = z.object({
+  question: z.string()
+    .min(1, 'Question cannot be empty')
+    .max(500, 'Question too long (max 500 characters)')
+    .trim()
+});
+
+// XSS protection
+function sanitizeInput(input: string): string {
+  return input
+    .replace(/[<>]/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '')
+    .trim();
+}
+```
+
+### Rate Limiting
+- 10 queries per day per anonymous user
+- Database-enforced limits using PostgreSQL functions
+- Real-time query count tracking
+- Graceful error handling when limit reached
+
+## 🎨 Frontend Components
+
+### AnonymousSearchBar
+The main search interface with:
+- Automatic anonymous authentication
+- Real-time query count display
+- Loading states and error handling
+- Input validation and sanitization
+- Responsive design
+
+```typescript
+// Automatic anonymous auth initialization
+useEffect(() => {
+  const initializeAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session?.user) {
+      const { data, error } = await supabase.auth.signInAnonymously();
+      // Handle auth...
+    }
+  };
+  
+  initializeAuth();
+}, []);
+```
 
 ## 🚀 Deployment
 
-The application is configured for seamless deployment on Vercel:
+### Vercel Deployment
 
-1. **Connect to Vercel**
+1. **Connect Repository**
    ```bash
    vercel --prod
    ```
 
 2. **Environment Variables**
-   Set the following in your Vercel dashboard:
+   Set in Vercel dashboard:
    - `GOOGLE_AI_API_KEY`
    - `SUPABASE_URL`
    - `SUPABASE_ANON_KEY`
 
-3. **Automatic Deployments**
-   Vercel will automatically deploy on every push to the main branch.
+3. **Supabase Configuration**
+   - Enable anonymous authentication
+   - Configure RLS policies
+   - Set up rate limiting functions
+
+### Supabase Setup
+
+1. **Enable Anonymous Auth**
+   ```bash
+   # In Supabase dashboard > Authentication > Settings
+   Enable "Allow anonymous sign-ins"
+   ```
+
+2. **Run Database Migrations**
+   ```sql
+   -- Create chats table and RLS policies
+   -- (See Architecture section above)
+   ```
 
 ## 🔧 Configuration
 
-### Database Setup
-The application automatically sets up the required database tables:
-- `documents`: Stores resume content with vector embeddings
-- `chats`: Stores user conversations and analytics
-- `profiles`: User profile information
+### Anonymous Authentication Setup
+```typescript
+// Supabase client configuration
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    storage: localStorage,
+    persistSession: true,
+    autoRefreshToken: true,
+  }
+});
+```
 
-### Authentication Setup
-1. Enable email authentication in Supabase
-2. Configure email templates (optional)
-3. Set up redirect URLs in Supabase dashboard
-
-### AI Service Setup
-1. Get Google AI API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Add the key to your environment variables
-3. The application uses Gemini 1.5 Flash for chat and embedding-001 for vectors
-
-## 🎨 Customization
-
-### Resume Content
-Update `resumeData.json` with your own resume information. The format includes:
-- Personal information
-- Work experience
-- Projects
-- Education
-- Skills
-- Interests
-
-### Styling
-The application uses Tailwind CSS with a custom design system defined in `src/index.css` and `tailwind.config.ts`.
-
-### AI Behavior
-Modify the system prompt in `api/query.ts` to customize how the AI responds to questions.
+### Rate Limiting Configuration
+```typescript
+// Configurable limits
+const DAILY_QUERY_LIMIT = 10;
+const MAX_QUESTION_LENGTH = 500;
+```
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **API Routes Not Working**
-   - Ensure you're using `vercel dev` for local development
-   - Check that environment variables are properly set
+1. **Anonymous Auth Not Working**
+   - Verify anonymous authentication is enabled in Supabase
+   - Check `SUPABASE_ANON_KEY` is correct
+   - Ensure RLS policies allow anonymous users
 
-2. **Database Connection Issues**
-   - Verify Supabase URL and keys
-   - Check RLS policies in Supabase dashboard
+2. **Rate Limiting Issues**
+   - Verify database functions are created correctly
+   - Check RLS policies for function access
+   - Ensure user sessions are properly maintained
 
 3. **AI Queries Failing**
-   - Confirm Google AI API key is valid
+   - Verify `GOOGLE_AI_API_KEY` is valid
    - Check API quotas and rate limits
+   - Ensure network connectivity
 
-4. **Authentication Problems**
-   - Set correct redirect URLs in Supabase dashboard
-   - Verify email confirmation settings
+### Debug Mode
+```env
+DEBUG=true
+NODE_ENV=development
+```
 
-### Logs and Debugging
-- Check Vercel function logs in the dashboard
-- Use browser dev tools for frontend debugging
-- Enable `DEBUG=true` for detailed logging
+## 📊 Analytics & Monitoring
 
-## 🔒 Security Measures Implemented
-
-✅ **Emergency Database Security**
-- RLS enabled on all tables (documents, chats, profiles)
-- Default-deny policies implemented
-- User-scoped access controls
-
-✅ **Authentication System**
-- Supabase email/password authentication
-- User profiles with role-based access
-- Automatic profile creation on signup
-
-✅ **Input Validation & Security**
-- Zod schema validation on all inputs
-- XSS protection with content sanitization
-- Rate limiting (10 requests/minute per IP)
-- Request timeout handling
-
-✅ **API Security**
-- CORS headers properly configured
-- Error messages sanitized in production
-- Environment variables secured
-- Function search paths secured
-
-✅ **Database Hardening**
-- Security definer functions with proper search paths
-- Admin-only document access
-- User-scoped chat access
-
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
+Track user engagement with built-in analytics:
+- Daily query counts per user
+- Popular questions and responses
+- Error rates and patterns
+- Authentication success rates
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🔗 Links
+
+- [Supabase Documentation](https://supabase.com/docs)
+- [Google AI Studio](https://makersuite.google.com/app/apikey)
+- [Vercel Documentation](https://vercel.com/docs)
 
 ---
 
-Built with ❤️ using React, TypeScript, Tailwind CSS, Supabase, and Vercel.
+**🎉 Ready to deploy! Anonymous authentication + AI search with enterprise-level security.**

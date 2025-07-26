@@ -1,6 +1,5 @@
 import { Mail, Phone, Linkedin, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SmartSearchBar } from "./smart-search-bar";
 export function HeroSection() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -30,10 +29,7 @@ export function HeroSection() {
             </p>
           </div>
 
-          {/* Smart Search Bar */}
-          <SmartSearchBar />
-          
-          {/* Contact Links */}
+          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 text-sm">
             {/* <a href="tel:+13055020995" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
               <Phone className="h-4 w-4" />

@@ -6,6 +6,7 @@ export const querySchema = z.object({
     .min(1, 'Question cannot be empty')
     .max(500, 'Question too long (max 500 characters)')
     .trim()
+    .refine(val => val.length > 0, 'Question cannot be empty after trimming')
 });
 
 // Validation schema for setup input

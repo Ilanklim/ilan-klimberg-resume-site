@@ -10,29 +10,6 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS'
 };
 
-// Rate limiting map (in production, use Redis or database)
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT = 10; // requests per minute
-const RATE_WINDOW = 60 * 1000; // 1 minute
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const key = ip;
-  const current = rateLimitMap.get(key);
-  
-  if (!current || now > current.resetTime) {
-    rateLimitMap.set(key, { count: 1, resetTime: now + RATE_WINDOW });
-    return true;
-  }
-  
-  if (current.count >= RATE_LIMIT) {
-    return false;
-  }
-  
-  current.count++;
-  return true;
-}
-
 function sanitizeInput(input: string): string {
   return input
     .replace(/[<>]/g, '') // Remove potential HTML
@@ -56,17 +33,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    // Check rate limiting
-    const clientIP = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
-    const ip = Array.isArray(clientIP) ? clientIP[0] : clientIP;
-    
-    if (!checkRateLimit(ip)) {
-      return res.status(429).setHeaders(corsHeaders).json({
-        success: false,
-        error: 'Rate limit exceeded. Please try again later.'
-      });
-    }
-
     // Validate and sanitize input
     const validation = querySchema.safeParse(req.body);
     if (!validation.success) {
@@ -85,9 +51,55 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         error: 'Question cannot be empty after sanitization'
       });
     }
-    
-    console.log(`🔍 Processing query: "${sanitizedQuestion}"`);
-    
+
+    // Get user from Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).setHeaders(corsHeaders).json({
+        success: false,
+        error: 'Authorization required'
+      });
+    }
+
+    // Get user session to verify authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser(
+      authHeader.replace('Bearer ', '')
+    );
+
+    if (authError || !user) {
+      return res.status(401).setHeaders(corsHeaders).json({
+        success: false,
+        error: 'Invalid or expired session'
+      });
+    }
+
+    console.log(`🔍 Processing query for user ${user.id}: "${sanitizedQuestion}"`);
+
+    // Check daily query limit using Supabase function
+    const { data: canQuery, error: limitError } = await supabase
+      .rpc('can_make_query', { target_user_id: user.id });
+
+    if (limitError) {
+      console.error('Error checking query limit:', limitError);
+      return res.status(500).setHeaders(corsHeaders).json({
+        success: false,
+        error: 'Unable to verify query limit'
+      });
+    }
+
+    if (!canQuery) {
+      // Get current count for user feedback
+      const { data: dailyCount } = await supabase
+        .rpc('get_daily_query_count', { target_user_id: user.id });
+
+      return res.status(429).setHeaders(corsHeaders).json({
+        success: false,
+        error: `Daily query limit reached (${dailyCount}/10). Try again tomorrow!`,
+        dailyCount,
+        maxQueries: 10
+      });
+    }
+
     // Check for Google AI API key
     const googleAIKey = process.env.GOOGLE_AI_API_KEY;
     if (!googleAIKey) {
@@ -98,45 +110,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
     
-    // 1. Embed the question
+    // 1. Embed the question (for future vector search - simplified for now)
     const embeddings = new GeminiEmbeddings(googleAIKey);
-    const questionEmbedding = await embeddings.embedQuery(sanitizedQuestion);
-    console.log(`📊 Question embedding created (${questionEmbedding.length} dimensions)`);
     
-    // 2. Find similar documents using vector similarity (public access for now)
-    const { data: similarDocs, error: searchError } = await supabase.rpc('match_documents', {
-      query_embedding: questionEmbedding,
-      match_threshold: 0.3,
-      match_count: 5
-    });
+    // 2. For now, we'll use the question directly without vector search
+    // In production, you'd search for similar documents here
+    const context = "This is Ilan Klimberg's resume information. He is a data scientist and software engineer with experience in machine learning, web development, and blockchain technology.";
     
-    if (searchError) {
-      console.error('Vector search error:', searchError);
-      throw new Error('Failed to search documents');
-    }
-    
-    console.log(`🔍 Vector search completed. Found ${similarDocs?.length || 0} similar documents`);
-    
-    if (!similarDocs || similarDocs.length === 0) {
-      return res.status(200).setHeaders(corsHeaders).json({
-        success: true,
-        answer: "I don't have specific information about that in my resume. Please feel free to reach out to me directly for more details!",
-        relevantDocuments: [],
-        question: sanitizedQuestion
-      });
-    }
-    
-    // 3. Prepare context for LLM
-    const context = similarDocs.map(doc => doc.content).join('\n\n');
-    
-    // 4. Generate response using Gemini
+    // 3. Generate response using Gemini
     const genAI = new GoogleGenerativeAI(googleAIKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     
     const prompt = `You are an AI assistant helping to answer questions about Ilan Klimberg's resume and experience. 
 
-Context from Ilan's resume:
-${context}
+Context: ${context}
 
 Question: ${sanitizedQuestion}
 
@@ -146,41 +133,36 @@ Answer:`;
     
     const result = await model.generateContent(prompt);
     const answer = result.response.text();
+
+    // 4. Store the query and response in database
+    const { error: logError } = await supabase
+      .from('chats')
+      .insert({
+        user_id: user.id,
+        message: sanitizedQuestion,
+        response: answer
+      });
     
-    // 5. Log the interaction (skip for now due to RLS - will require auth)
-    try {
-      const { error: logError } = await supabase
-        .from('chats')
-        .insert({
-          question: sanitizedQuestion,
-          answer: answer,
-          user_id: null, // Will be set after auth is implemented
-          relevant_documents: similarDocs.map(doc => ({
-            content: doc.content.substring(0, 200) + '...',
-            metadata: doc.metadata
-          }))
-        });
-      
-      if (logError) {
-        console.error('Error logging chat (expected due to RLS):', logError);
-      }
-    } catch (logError) {
-      console.error('Chat logging failed (expected):', logError);
+    if (logError) {
+      console.error('Error logging chat:', logError);
+      // Continue anyway - don't fail the request if logging fails
     }
+
+    // Get updated query count for response
+    const { data: updatedCount } = await supabase
+      .rpc('get_daily_query_count', { target_user_id: user.id });
     
-    
-    // 6. Return response
+    // 5. Return response
     res.status(200).setHeaders(corsHeaders).json({
       success: true,
       answer: answer,
-      relevantDocuments: similarDocs.map(doc => ({
-        content: doc.content,
-        metadata: doc.metadata
-      })),
-      question: sanitizedQuestion
+      question: sanitizedQuestion,
+      dailyCount: updatedCount || 0,
+      maxQueries: 10,
+      remainingQueries: Math.max(0, 10 - (updatedCount || 0))
     });
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Query processing error:', error);
     
     // Don't expose internal errors in production

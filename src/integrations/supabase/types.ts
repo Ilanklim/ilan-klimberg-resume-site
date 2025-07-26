@@ -16,28 +16,25 @@ export type Database = {
     Tables: {
       chats: {
         Row: {
-          answer: string
           created_at: string | null
           id: string
-          question: string
-          relevant_documents: Json | null
-          user_id: string | null
+          message: string
+          response: string
+          user_id: string
         }
         Insert: {
-          answer: string
           created_at?: string | null
           id?: string
-          question: string
-          relevant_documents?: Json | null
-          user_id?: string | null
+          message: string
+          response: string
+          user_id: string
         }
         Update: {
-          answer?: string
           created_at?: string | null
           id?: string
-          question?: string
-          relevant_documents?: Json | null
-          user_id?: string | null
+          message?: string
+          response?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -100,6 +97,14 @@ export type Database = {
       binary_quantize: {
         Args: { "": string } | { "": unknown }
         Returns: unknown
+      }
+      can_make_query: {
+        Args: { target_user_id?: string }
+        Returns: boolean
+      }
+      get_daily_query_count: {
+        Args: { target_user_id?: string }
+        Returns: number
       }
       halfvec_avg: {
         Args: { "": number[] }
