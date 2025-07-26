@@ -21,7 +21,14 @@ export function SmartSearchBar() {
   const [error, setError] = useState<string | null>(null)
 
   const handleSearch = async () => {
-    if (!query.trim()) return
+    const trimmedQuery = query.trim()
+    if (!trimmedQuery) return
+    
+    // Basic client-side validation
+    if (trimmedQuery.length > 500) {
+      setError('Question is too long (max 500 characters)')
+      return
+    }
     
     setIsSearching(true)
     setError(null)
@@ -38,7 +45,7 @@ export function SmartSearchBar() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ question: query }),
+        body: JSON.stringify({ question: trimmedQuery }),
         signal: controller.signal
       })
       
@@ -57,7 +64,7 @@ export function SmartSearchBar() {
       
       if (data.success) {
         setResponse({
-          question: query,
+          question: trimmedQuery,
           answer: data.answer,
           relevantDocuments: data.relevantDocuments || [],
           success: true
@@ -90,8 +97,10 @@ export function SmartSearchBar() {
         setError('Request timed out. Please try again.')
       } else if (error.message.includes('Failed to fetch')) {
         setError('Network error. Please check your connection and try again.')
+      } else if (error.message.includes('429')) {
+        setError('Too many requests. Please wait a moment and try again.')
       } else {
-        setError(`Failed to connect to the AI service: ${error.message}`)
+        setError(`Failed to connect to the AI service. Please try again later.`)
       }
     } finally {
       setIsSearching(false)

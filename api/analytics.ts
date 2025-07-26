@@ -1,9 +1,23 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabase } from '../lib/supabase';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS'
+};
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).json({}).setHeaders(corsHeaders);
+  }
+
   if (req.method !== 'GET') {
-    return res.status(405).json({ success: false, error: 'Method not allowed' });
+    return res.status(405).setHeaders(corsHeaders).json({ 
+      success: false, 
+      error: 'Method not allowed' 
+    });
   }
 
   try {
@@ -35,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       throw docsError;
     }
     
-    res.json({
+    res.status(200).setHeaders(corsHeaders).json({
       success: true,
       analytics: {
         totalChats,
@@ -44,9 +58,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     });
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Analytics error:', error);
-    res.status(500).json({
+    res.status(500).setHeaders(corsHeaders).json({
       success: false,
       error: error.message
     });

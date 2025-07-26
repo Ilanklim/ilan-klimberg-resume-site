@@ -1,19 +1,33 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { setupDatabase, supabase } from '../lib/supabase';
 import { GeminiEmbeddings } from '../lib/gemini-embeddings';
 import { chunkResume, getResumeStats } from '../lib/resume-chunker';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+};
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).json({}).setHeaders(corsHeaders);
+  }
+
   if (req.method === 'POST') {
     return handleInit(req, res);
   } else if (req.method === 'GET') {
     return handleStatus(req, res);
   } else {
-    return res.status(405).json({ success: false, error: 'Method not allowed' });
+    return res.status(405).setHeaders(corsHeaders).json({ 
+      success: false, 
+      error: 'Method not allowed' 
+    });
   }
 }
 
-async function handleInit(req: NextApiRequest, res: NextApiResponse) {
+async function handleInit(req: VercelRequest, res: VercelResponse) {
   try {
     console.log('🚀 Starting RAG system initialization...');
     
@@ -80,7 +94,7 @@ async function handleInit(req: NextApiRequest, res: NextApiResponse) {
     
     const stats = await getResumeStats();
     
-    res.json({
+    res.status(200).setHeaders(corsHeaders).json({
       success: true,
       message: 'RAG system initialized successfully',
       stats: {
@@ -90,16 +104,16 @@ async function handleInit(req: NextApiRequest, res: NextApiResponse) {
       }
     });
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Setup error:', error);
-    res.status(500).json({
+    res.status(500).setHeaders(corsHeaders).json({
       success: false,
       error: error.message
     });
   }
 }
 
-async function handleStatus(req: NextApiRequest, res: NextApiResponse) {
+async function handleStatus(req: VercelRequest, res: VercelResponse) {
   try {
     // Check document count
     const { count, error } = await supabase
@@ -121,7 +135,7 @@ async function handleStatus(req: NextApiRequest, res: NextApiResponse) {
     
     const stats = await getResumeStats();
     
-    res.json({
+    res.status(200).setHeaders(corsHeaders).json({
       success: true,
       status: {
         documentsCount: count,
@@ -131,9 +145,9 @@ async function handleStatus(req: NextApiRequest, res: NextApiResponse) {
       }
     });
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Status check error:', error);
-    res.status(500).json({
+    res.status(500).setHeaders(corsHeaders).json({
       success: false,
       error: error.message
     });
