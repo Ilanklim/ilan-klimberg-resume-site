@@ -6,6 +6,9 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "types": ["@vercel/node"]
     "paths": {
       "@/*": ["./src/*"]
     },
