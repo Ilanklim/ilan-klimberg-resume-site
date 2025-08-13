@@ -49,6 +49,11 @@ export function HeroSection() {
             </a>
           </div>
 
+          {/* Search Bar Component Placeholder - will be inserted here from Index.tsx */}
+          <div id="search-bar-container" className="mb-8">
+            {/* Search bar will be rendered here */}
+          </div>
+
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-gradient-primary hover:shadow-glow transition-all duration-300" onClick={() => scrollToSection('experience')}>

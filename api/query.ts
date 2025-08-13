@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GeminiEmbeddings } from '../lib/gemini-embeddings';
-import { supabase } from '../lib/supabase';
-import { querySchema } from '../lib/validation';
+import { GeminiEmbeddings } from '../lib/gemini-embeddings.js';
+import { supabase } from '../lib/supabase.js';
+import { querySchema } from '../lib/validation.js';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,13 +19,18 @@ function sanitizeInput(input: string): string {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'authorization, x-client-info, apikey, content-type');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return res.status(200).json({}).setHeaders(corsHeaders);
+    return res.status(200).json({});
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).setHeaders(corsHeaders).json({ 
+    return res.status(405).json({ 
       success: false, 
       error: 'Method not allowed',
       allowedMethods: ['POST']
@@ -36,7 +41,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Validate and sanitize input
     const validation = querySchema.safeParse(req.body);
     if (!validation.success) {
-      return res.status(400).setHeaders(corsHeaders).json({
+      return res.status(400).json({
         success: false,
         error: 'Invalid input: ' + validation.error.errors.map(e => e.message).join(', ')
       });
@@ -46,7 +51,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const sanitizedQuestion = sanitizeInput(question);
     
     if (!sanitizedQuestion) {
-      return res.status(400).setHeaders(corsHeaders).json({
+      return res.status(400).json({
         success: false,
         error: 'Question cannot be empty after sanitization'
       });
@@ -55,7 +60,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Get user from Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(401).setHeaders(corsHeaders).json({
+      return res.status(401).json({
         success: false,
         error: 'Authorization required'
       });
@@ -67,7 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     );
 
     if (authError || !user) {
-      return res.status(401).setHeaders(corsHeaders).json({
+      return res.status(401).json({
         success: false,
         error: 'Invalid or expired session'
       });
@@ -81,7 +86,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (limitError) {
       console.error('Error checking query limit:', limitError);
-      return res.status(500).setHeaders(corsHeaders).json({
+      return res.status(500).json({
         success: false,
         error: 'Unable to verify query limit'
       });
@@ -92,7 +97,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data: dailyCount } = await supabase
         .rpc('get_daily_query_count', { target_user_id: user.id });
 
-      return res.status(429).setHeaders(corsHeaders).json({
+      return res.status(429).json({
         success: false,
         error: `Daily query limit reached (${dailyCount}/10). Try again tomorrow!`,
         dailyCount,
@@ -104,7 +109,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const googleAIKey = process.env.GOOGLE_AI_API_KEY;
     if (!googleAIKey) {
       console.error('Missing GOOGLE_AI_API_KEY environment variable');
-      return res.status(500).setHeaders(corsHeaders).json({
+      return res.status(500).json({
         success: false,
         error: 'AI service configuration error'
       });
@@ -153,7 +158,7 @@ Answer:`;
       .rpc('get_daily_query_count', { target_user_id: user.id });
     
     // 5. Return response
-    res.status(200).setHeaders(corsHeaders).json({
+    res.status(200).json({
       success: true,
       answer: answer,
       question: sanitizedQuestion,
@@ -171,7 +176,7 @@ Answer:`;
       ? 'An error occurred while processing your request. Please try again later.'
       : `Error: ${error.message}`;
     
-    res.status(500).setHeaders(corsHeaders).json({
+    res.status(500).json({
       success: false,
       error: errorMessage
     });

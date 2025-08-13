@@ -124,12 +124,12 @@ export function AnonymousSearchBar() {
     setResponse(null)
     
     try {
-      console.log('🔍 Sending query to:', `${API_BASE_URL}/api/query`)
+      console.log('🔍 Sending query to:', `${API_BASE_URL}/query`)
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
       
-      const response = await fetch(`${API_BASE_URL}/api/query`, {
+      const response = await fetch(`${API_BASE_URL}/query`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
