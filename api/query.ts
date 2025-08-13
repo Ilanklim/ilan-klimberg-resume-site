@@ -115,20 +115,82 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
     
-    // 1. Embed the question (for future vector search - simplified for now)
+    // 1. Initialize Gemini embeddings for vector search
     const embeddings = new GeminiEmbeddings(googleAIKey);
+    const questionEmbedding = await embeddings.embedQuery(sanitizedQuestion);
     
-    // 2. For now, we'll use the question directly without vector search
-    // In production, you'd search for similar documents here
-    const context = "This is Ilan Klimberg's resume information. He is a data scientist and software engineer with experience in machine learning, web development, and blockchain technology.";
+    // 2. Find similar documents using secure vector similarity search
+    const { data: similarDocs, error: searchError } = await supabase.rpc('match_documents_secure', {
+      query_embedding: questionEmbedding,
+      match_threshold: 0.3,
+      match_count: 5
+    });
     
-    // 3. Generate response using Gemini
+    if (searchError) {
+      console.error('Vector search error:', searchError);
+      // Fallback to generic response if document search fails
+      const context = "This is Ilan Klimberg's resume information. He is a data scientist and software engineer with experience in machine learning, web development, and blockchain technology.";
+      
+      const genAI = new GoogleGenerativeAI(googleAIKey);
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      
+      const prompt = `You are an AI assistant helping to answer questions about Ilan Klimberg's resume and experience. 
+      
+Context: ${context}
+
+Question: ${sanitizedQuestion}
+
+Please provide a helpful, accurate answer based on the context above. Be conversational and professional. If the context doesn't contain enough information to fully answer the question, acknowledge what you can answer and suggest reaching out to Ilan directly.
+
+Answer:`;
+      
+      const result = await model.generateContent(prompt);
+      const answer = result.response.text();
+      
+      // Store the query and response
+      const { error: logError } = await supabase
+        .from('chats')
+        .insert({
+          user_id: user.id,
+          message: sanitizedQuestion,
+          response: answer
+        });
+      
+      if (logError) {
+        console.error('Error logging chat:', logError);
+      }
+      
+      const { data: updatedCount } = await supabase
+        .rpc('get_daily_query_count', { target_user_id: user.id });
+      
+      return res.status(200).json({
+        success: true,
+        answer: answer,
+        question: sanitizedQuestion,
+        dailyCount: updatedCount || 0,
+        maxQueries: 10,
+        remainingQueries: Math.max(0, 10 - (updatedCount || 0))
+      });
+    }
+    
+    console.log(`🔍 Vector search completed. Found ${similarDocs?.length || 0} similar documents`);
+    
+    // 3. Prepare context from retrieved documents or use fallback
+    let context;
+    if (!similarDocs || similarDocs.length === 0) {
+      context = "This is Ilan Klimberg's resume information. He is a data scientist and software engineer with experience in machine learning, web development, and blockchain technology.";
+    } else {
+      context = similarDocs.map(doc => doc.content).join('\n\n');
+    }
+    
+    // 4. Generate response using Gemini with retrieved context
     const genAI = new GoogleGenerativeAI(googleAIKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     
     const prompt = `You are an AI assistant helping to answer questions about Ilan Klimberg's resume and experience. 
 
-Context: ${context}
+Context from Ilan's resume:
+${context}
 
 Question: ${sanitizedQuestion}
 
@@ -139,7 +201,7 @@ Answer:`;
     const result = await model.generateContent(prompt);
     const answer = result.response.text();
 
-    // 4. Store the query and response in database
+    // 5. Store the query and response in database
     const { error: logError } = await supabase
       .from('chats')
       .insert({
@@ -157,7 +219,7 @@ Answer:`;
     const { data: updatedCount } = await supabase
       .rpc('get_daily_query_count', { target_user_id: user.id });
     
-    // 5. Return response
+    // 6. Return response
     res.status(200).json({
       success: true,
       answer: answer,
