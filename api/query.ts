@@ -1,4 +1,3 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GeminiEmbeddings } from '../lib/gemini-embeddings.js';
 import { supabase } from '../lib/supabase.js';
