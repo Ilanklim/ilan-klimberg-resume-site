@@ -1,4 +1,3 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { setupDatabase, supabase } from '../lib/supabase';
 import { GeminiEmbeddings } from '../lib/gemini-embeddings';
 import { chunkResume, getResumeStats } from '../lib/resume-chunker';
