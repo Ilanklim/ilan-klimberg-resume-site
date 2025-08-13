@@ -1,3 +1,4 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { setupDatabase, supabase } from '../lib/supabase';
 import { GeminiEmbeddings } from '../lib/gemini-embeddings';
 import { chunkResume, getResumeStats } from '../lib/resume-chunker';
@@ -8,7 +9,7 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
 };
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return res.status(200).json({}).setHeaders(corsHeaders);
@@ -26,7 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 }
 
-async function handleInit(req: VercelRequest, res: VercelResponse) {
+async function handleInit(req: NextApiRequest, res: NextApiResponse) {
   try {
     console.log('🚀 Starting RAG system initialization...');
     
@@ -112,7 +113,7 @@ async function handleInit(req: VercelRequest, res: VercelResponse) {
   }
 }
 
-async function handleStatus(req: VercelRequest, res: VercelResponse) {
+async function handleStatus(req: NextApiRequest, res: NextApiResponse) {
   try {
     // Check document count
     const { count, error } = await supabase
