@@ -23,4 +23,8 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist",
     sourcemap: mode === 'development',
   },
+  // Configure for API routes (if using vite for dev)
+  define: {
+    global: 'globalThis',
+  },
 }));

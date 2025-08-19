@@ -1,9 +1,25 @@
 {
+  "buildCommand": "vite build",
+  "outputDirectory": "dist", 
+  "framework": "vite",
+  "installCommand": "npm install",
+  "devCommand": "vite --port $PORT",
   "functions": {
     "api/rag-query.ts": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "runtime": "@vercel/node"
     }
   },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/api/(.*)",
@@ -13,7 +29,7 @@
           "value": "https://ilanklimberg.com, http://localhost:8080"
         },
         {
-          "key": "Access-Control-Allow-Methods",
+          "key": "Access-Control-Allow-Methods", 
           "value": "POST, OPTIONS"
         },
         {
