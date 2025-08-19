@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -164,26 +164,26 @@ export type Database = {
       }
       match_documents: {
         Args: {
-          query_embedding: string
-          match_threshold?: number
           match_count?: number
+          match_threshold?: number
+          query_embedding: string
         }
         Returns: {
-          id: string
           content: string
+          id: string
           metadata: Json
           similarity: number
         }[]
       }
       match_documents_secure: {
         Args: {
-          query_embedding: string
-          match_threshold?: number
           match_count?: number
+          match_threshold?: number
+          query_embedding: string
         }
         Returns: {
-          id: string
           content: string
+          id: string
           metadata: Json
           similarity: number
         }[]

@@ -13,13 +13,14 @@ const envSchema = z.object({
   GOOGLE_AI_API_KEY: z.string().min(1, 'GOOGLE_AI_API_KEY is required'),
   SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid URL'),
   SUPABASE_ANON_KEY: z.string().min(1, 'SUPABASE_ANON_KEY is required'),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'SUPABASE_SERVICE_ROLE_KEY is required').optional(),
   CORS_ALLOW_ORIGINS: z.string().default('https://ilanklimberg.com,http://localhost:8080'),
   DAILY_QUERY_CAP: z.coerce.number().int().positive().default(10),
 });
 
 // Debug: Log what environment variables are available
 const availableVars = Object.keys(process.env).filter(key => 
-  ['GOOGLE_AI_API_KEY', 'SUPABASE_URL', 'SUPABASE_ANON_KEY'].includes(key)
+  ['GOOGLE_AI_API_KEY', 'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY'].includes(key)
 );
 console.log('🔍 Available environment variables:', availableVars);
 

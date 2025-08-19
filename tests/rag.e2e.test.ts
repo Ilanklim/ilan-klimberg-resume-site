@@ -89,8 +89,8 @@ describe('RAG System E2E', () => {
       const chunks = chunkResumeData(mockResumeData);
       expect(chunks).toHaveLength(5); // about, education, experience, skills, organizations
       
-      // Step 2: Mock embeddings for chunks
-      const mockEmbedding = new Float32Array(1536).fill(0.1);
+      // Step 2: Mock embeddings for chunks (768 dimensions)
+      const mockEmbedding = new Float32Array(768).fill(0.1);
       mockEmbeddings.embedText.mockResolvedValue(mockEmbedding);
       
       // Step 3: Create documents and store in vector DB
@@ -108,8 +108,8 @@ describe('RAG System E2E', () => {
       await vectorDB.upsert(documents);
       expect(vectorDB.getDocumentCount()).toBe(5);
       
-      // Step 4: Mock query embedding
-      const queryEmbedding = new Float32Array(1536).fill(0.2);
+      // Step 4: Mock query embedding (768 dimensions)
+      const queryEmbedding = new Float32Array(768).fill(0.2);
       mockEmbeddings.embedText.mockResolvedValue(queryEmbedding);
       
       // Step 5: Search for similar documents
@@ -136,7 +136,7 @@ describe('RAG System E2E', () => {
     it('should handle queries with no relevant context', async () => {
       // Setup with minimal data
       const chunks = chunkResumeData(mockResumeData);
-      const mockEmbedding = new Float32Array(1536).fill(0.1);
+      const mockEmbedding = new Float32Array(768).fill(0.1);
       
       mockEmbeddings.embedText.mockResolvedValue(mockEmbedding);
       
@@ -151,7 +151,7 @@ describe('RAG System E2E', () => {
       
       // Query about something not in the resume
       const query = 'What is Ilan\'s favorite color?';
-      const queryEmbedding = new Float32Array(1536).fill(0.9); // Very different embedding
+      const queryEmbedding = new Float32Array(768).fill(0.9); // Very different embedding
       
       mockEmbeddings.embedText.mockResolvedValue(queryEmbedding);
       
@@ -204,7 +204,7 @@ describe('RAG System E2E', () => {
       mockLLM.completeStream.mockImplementation(mockStream);
       
       const chunks = chunkResumeData(mockResumeData);
-      const mockEmbedding = new Float32Array(1536).fill(0.1);
+      const mockEmbedding = new Float32Array(768).fill(0.1);
       
       mockEmbeddings.embedText.mockResolvedValue(mockEmbedding);
       
@@ -218,7 +218,7 @@ describe('RAG System E2E', () => {
       await vectorDB.upsert(documents);
       
       const query = 'Tell me about Ilan';
-      const queryEmbedding = new Float32Array(1536).fill(0.2);
+      const queryEmbedding = new Float32Array(768).fill(0.2);
       mockEmbeddings.embedText.mockResolvedValue(queryEmbedding);
       
       const searchResults = await vectorDB.similaritySearchByFn(queryEmbedding, 0.7, 6);

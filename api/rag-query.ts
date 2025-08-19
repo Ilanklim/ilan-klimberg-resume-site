@@ -100,8 +100,11 @@ export default async function handler(req: Request): Promise<Response> {
 
     const token = authHeader.substring(7);
     
-    // Initialize Supabase client
-    const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
+    // Initialize Supabase client with user JWT
+    const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
+      auth: { persistSession: false },
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    });
     
     // Verify JWT token
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
@@ -215,11 +218,27 @@ export default async function handler(req: Request): Promise<Response> {
       const retrieveStart = Date.now();
       const queryEmbedding = await embeddings.embedText(query);
       
-      // Search for similar documents
-      const searchResults = await vectorDB.similaritySearchByFn(queryEmbedding, 0.7, 6);
+      // Search for similar documents using secure RPC
+      const embeddingArray = Array.from(queryEmbedding);
+      const { data: searchResults, error: searchError } = await supabase.rpc('match_documents_secure', {
+        query_embedding: embeddingArray,
+        match_threshold: 0.7,
+        match_count: 6
+      });
+
+      if (searchError) {
+        console.error('Search error:', searchError);
+        throw new Error(`Failed to search documents: ${searchError.message}`);
+      }
+
+      const results = (searchResults || []).map((row: any) => ({
+        content: row.content,
+        metadata: row.metadata,
+        similarity: row.similarity,
+      }));
       
       // Truncate context to stay within token limits
-      const truncatedResults = truncateContext(searchResults, 2400);
+      const truncatedResults = truncateContext(results, 2400);
       
       const retrieveTime = Date.now() - retrieveStart;
 

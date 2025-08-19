@@ -15,10 +15,10 @@ export class GeminiEmbeddings {
       const result = await model.embedContent(text);
       const embedding = await result.embedding;
       
-      // Convert to Float32Array with 1536 dimensions
+      // Convert to Float32Array with 768 dimensions
       const values = embedding.values;
-      if (values.length !== 1536) {
-        throw new Error(`Expected 1536 dimensions, got ${values.length}`);
+      if (values.length !== 768) {
+        throw new Error(`Expected 768 dimensions, got ${values.length}`);
       }
       
       return new Float32Array(values);

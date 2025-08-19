@@ -4,7 +4,8 @@ import { parseArgs } from 'node:util';
 import { loadResumeData, validateResumeData } from './loaders.js';
 import { chunkResumeData, hashContent } from '../lib/chunking.js';
 import { GeminiEmbeddings } from '../lib/embeddings/index.js';
-import { PgVectorDB } from '../lib/vectordb/pgvector.js';
+import { createClient } from '@supabase/supabase-js';
+import { env } from '../lib/env.js';
 import type { Document } from '../lib/vectordb/index.js';
 
 async function main() {
@@ -51,15 +52,19 @@ Example:
     const chunks = chunkResumeData(resumeData);
     console.log(`✅ Created ${chunks.length} chunks`);
     
-    // Initialize embeddings and vector DB
-    console.log('🔧 Initializing Gemini embeddings...');
+    // Initialize embeddings with 768 dimensions
+    console.log('🔧 Initializing Gemini embeddings (768-dim)...');
     const embeddings = new GeminiEmbeddings();
     
-    console.log('🗄️  Connecting to PostgreSQL vector database...');
-    const vectorDB = new PgVectorDB();
+    // Initialize Supabase client with service role key for ingestion
+    console.log('🗄️  Connecting to Supabase with service role key...');
+    if (!env.SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for ingestion');
+    }
+    const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
     
     // Generate embeddings for each chunk
-    console.log('🧠 Generating embeddings for chunks...');
+    console.log('🧠 Generating 768-dimensional embeddings for chunks...');
     const documents: Document[] = [];
     
     for (let i = 0; i < chunks.length; i++) {
@@ -68,6 +73,11 @@ Example:
       
       const embedding = await embeddings.embedText(chunk.content);
       const contentHash = hashContent(chunk.content);
+      
+      // Verify embedding dimensions
+      if (embedding.length !== 768) {
+        throw new Error(`Expected 768 dimensions, got ${embedding.length} for chunk ${i + 1}`);
+      }
       
       documents.push({
         id: contentHash,
@@ -82,20 +92,35 @@ Example:
       });
     }
     
-    // Store documents in vector database
-    console.log('💾 Storing documents in vector database...');
-    await vectorDB.upsert(documents);
-    console.log(`✅ Successfully stored ${documents.length} documents`);
+    // Store documents in Supabase
+    console.log('💾 Storing documents in Supabase...');
     
-    // Cleanup
-    await vectorDB.close();
-    console.log('🧹 Cleanup completed');
+    for (const doc of documents) {
+      const { error } = await supabase
+        .from('documents')
+        .upsert({
+          id: doc.id,
+          content: doc.content,
+          embedding: Array.from(doc.embedding), // Convert Float32Array to regular array
+          metadata: doc.metadata,
+        }, {
+          onConflict: 'id'
+        });
+
+      if (error) {
+        console.error('Error upserting document:', error);
+        throw new Error(`Failed to upsert document: ${error.message}`);
+      }
+    }
+    
+    console.log(`✅ Successfully stored ${documents.length} documents with 768-dim embeddings`);
     
     console.log('🎉 Resume data ingestion completed successfully!');
     console.log(`📊 Summary:`);
     console.log(`   - Total chunks: ${chunks.length}`);
     console.log(`   - Sections: ${chunks.map(c => c.section).join(', ')}`);
     console.log(`   - Documents stored: ${documents.length}`);
+    console.log(`   - Embedding dimensions: 768`);
     
   } catch (error) {
     console.error('❌ Error during ingestion:', error);

@@ -5,7 +5,7 @@ A production-ready RAG (Retrieval-Augmented Generation) Q&A system for my person
 ## 🚀 Features
 
 - **RAG Q&A System**: Ask questions about my resume and get AI-powered answers
-- **Vector Search**: Semantic search using Google Gemini embeddings (1536 dimensions)
+- **Vector Search**: Semantic search using Google Gemini embeddings (768 dimensions)
 - **Rate Limiting**: Per-user daily query limits with Supabase RLS
 - **Streaming Support**: Server-Sent Events (SSE) for real-time responses
 - **CORS Protection**: Whitelisted origins for security
@@ -71,11 +71,11 @@ Since you're using Supabase directly, run the following SQL in your Supabase SQL
 create extension if not exists vector;
 create extension if not exists pgcrypto;
 
--- Documents table for storing resume chunks
+-- Documents table for storing resume chunks with 768-dimensional embeddings
 create table if not exists public.documents (
   id uuid primary key default gen_random_uuid(),
   content text not null,
-  embedding vector(1536) not null,
+  embedding vector(768) not null,
   metadata jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now()
 );
@@ -128,9 +128,9 @@ create policy queries_owner_read
 create policy queries_owner_insert
   on public.queries for insert with check (auth.uid() = user_id);
 
--- Similarity search function
+-- Similarity search function for 768-dimensional vectors
 create or replace function public.match_documents(
-  query_embedding vector(1536),
+  query_embedding vector(768),
   match_threshold float,
   match_count int
 )
@@ -287,7 +287,7 @@ npm run test tests/unit/chunking.test.ts
 
 ## 📊 Performance
 
-- **Embeddings**: 1536-dimensional vectors for semantic search
+- **Embeddings**: 768-dimensional vectors for semantic search
 - **Context Limit**: ~2400 tokens for retrieved context
 - **Output Limit**: ~350 tokens for LLM responses
 - **Search**: Top-6 results with 0.7 similarity threshold
