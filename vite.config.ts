@@ -23,7 +23,33 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist",
     sourcemap: mode === 'development',
   },
-  // Configure for API routes (if using vite for dev)
+  // Override TypeScript config for development to avoid project reference issues
+  esbuild: {
+    tsconfigRaw: {
+      compilerOptions: {
+        target: "ES2022",
+        useDefineForClassFields: true,
+        lib: ["ES2022", "DOM", "DOM.Iterable"],
+        module: "ESNext",
+        skipLibCheck: true,
+        moduleResolution: "bundler",
+        allowImportingTsExtensions: true,
+        resolveJsonModule: true,
+        isolatedModules: true,
+        noEmit: true,
+        jsx: "react-jsx",
+        strict: true,
+        allowSyntheticDefaultImports: true,
+        esModuleInterop: true,
+        forceConsistentCasingInFileNames: true,
+        baseUrl: ".",
+        paths: {
+          "@/*": ["./src/*"]
+        }
+      }
+    }
+  },
+  // Configure for API routes if needed
   define: {
     global: 'globalThis',
   },

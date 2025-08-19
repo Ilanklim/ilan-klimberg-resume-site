@@ -1,9 +1,9 @@
 {
   "buildCommand": "vite build",
   "outputDirectory": "dist", 
-  "framework": "vite",
+  "framework": null,
   "installCommand": "npm install",
-  "devCommand": "vite --port $PORT",
+  "devCommand": "vite --host :: --port $PORT",
   "functions": {
     "api/rag-query.ts": {
       "maxDuration": 30,
