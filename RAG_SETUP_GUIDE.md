@@ -34,9 +34,6 @@ GOOGLE_AI_API_KEY=your_google_ai_api_key_here
 SUPABASE_URL=https://your-project-id.supabase.co
 SUPABASE_ANON_KEY=your_supabase_anon_key_here
 
-# Server Configuration
-PORT=3001
-FRONTEND_URL=http://localhost:5173
 
 # Optional: Enable detailed logging
 DEBUG=true
@@ -103,49 +100,6 @@ END;
 $$;
 ```
 
-### 4. Initialize the RAG System
-
-#### 4.1 Start the Backend Server
-
-```bash
-# Development mode with auto-restart
-npm run dev:server
-
-# Or production mode
-npm run server
-```
-
-#### 4.2 Initialize the Database
-
-Make a POST request to initialize the system:
-
-```bash
-curl -X POST http://localhost:3001/api/setup/init
-```
-
-Or use the provided script:
-
-```bash
-node -e "
-fetch('http://localhost:3001/api/setup/init', {method: 'POST'})
-  .then(r => r.json())
-  .then(console.log)
-  .catch(console.error)
-"
-```
-
-#### 4.3 Check System Status
-
-```bash
-curl http://localhost:3001/api/setup/status
-```
-
-### 5. Start the Frontend
-
-```bash
-npm run dev
-```
-
 Your RAG-powered resume website is now running at `http://localhost:5173`!
 
 ## 🔧 API Endpoints
@@ -197,10 +151,6 @@ Your RAG-powered resume website is now running at `http://localhost:5173`!
 3. **"No documents found"**
    - Run the setup initialization again
    - Check Supabase logs for embedding errors
-
-4. **CORS errors**
-   - Verify `FRONTEND_URL` in your `.env` file
-   - Check the CORS configuration in `server/index.js`
 
 ### Debug Mode
 
