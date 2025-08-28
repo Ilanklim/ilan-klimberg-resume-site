@@ -1,5 +1,5 @@
 // pages/api/query.ts
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GeminiEmbeddings } from "../lib/gemini-embeddings";
 import { supabase } from "../lib/supabase";
@@ -12,11 +12,11 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 } as const;
 
-function setCors(res: NextApiResponse) {
+function setCors(res: VercelResponse) {
   for (const [k, v] of Object.entries(corsHeaders)) res.setHeader(k, v);
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   setCors(res);
 
   if (req.method === "OPTIONS") {

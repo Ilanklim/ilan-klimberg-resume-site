@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../lib/supabase";
 
 const corsHeaders = {
@@ -8,11 +8,11 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, OPTIONS",
 } as const;
 
-function setCors(res: NextApiResponse) {
+function setCors(res: VercelResponse) {
   for (const [k, v] of Object.entries(corsHeaders)) res.setHeader(k, v);
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS preflight
   if (req.method === "OPTIONS") {
     setCors(res);

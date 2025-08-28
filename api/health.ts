@@ -1,4 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,11 +8,11 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, OPTIONS",
 } as const;
 
-function setCors(res: NextApiResponse) {
+function setCors(res: VercelResponse) {
   for (const [k, v] of Object.entries(corsHeaders)) res.setHeader(k, v);
 }
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(req: VercelRequest, res: VercelResponse) {
   // CORS preflight
   if (req.method === "OPTIONS") {
     setCors(res);

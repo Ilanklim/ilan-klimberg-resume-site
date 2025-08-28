@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { setupDatabase, supabase } from "../lib/supabase";
 import { GeminiEmbeddings } from "../lib/gemini-embeddings";
 import { chunkResume, getResumeStats } from "../lib/resume-chunker";
@@ -10,13 +10,13 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 }
 
-function setCors(res: NextApiResponse) {
+function setCors(res: VercelResponse) {
   for (const [k, v] of Object.entries(corsHeaders)) {
     res.setHeader(k, v);
   }
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS preflight
   if (req.method === "OPTIONS") {
     setCors(res);
@@ -44,7 +44,7 @@ type DocRow = {
   embedding: number[];
 };
 
-async function handleInit(_req: NextApiRequest, res: NextApiResponse) {
+async function handleInit(_req: VercelRequest, res: VercelResponse) {
   try {
     setCors(res);
     console.log("🚀 Starting RAG system initialization...");
@@ -134,7 +134,7 @@ async function handleInit(_req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function handleStatus(_req: NextApiRequest, res: NextApiResponse) {
+async function handleStatus(_req: VercelRequest, res: VercelResponse) {
   try {
     setCors(res);
 
