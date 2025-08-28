@@ -11,14 +11,14 @@ export default tseslint.config(
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: globals.browser as Record<string, boolean>, // 👈 add type
     },
     plugins: {
-      "react-hooks": reactHooks,
-      "react-refresh": reactRefresh,
+      "react-hooks": reactHooks as any,
+      "react-refresh": reactRefresh as any,
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
+      ...(reactHooks.configs.recommended?.rules ?? {}),
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
