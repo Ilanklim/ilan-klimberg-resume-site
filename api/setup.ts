@@ -1,155 +1,172 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { setupDatabase, supabase } from '../lib/supabase';
-import { GeminiEmbeddings } from '../lib/gemini-embeddings';
-import { chunkResume, getResumeStats } from '../lib/resume-chunker';
+import type { NextApiRequest, NextApiResponse } from "next";
+import { setupDatabase, supabase } from "../lib/supabase";
+import { GeminiEmbeddings } from "../lib/gemini-embeddings";
+import { chunkResume, getResumeStats } from "../lib/resume-chunker";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
-};
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+}
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).json({}).setHeaders(corsHeaders);
-  }
-
-  if (req.method === 'POST') {
-    return handleInit(req, res);
-  } else if (req.method === 'GET') {
-    return handleStatus(req, res);
-  } else {
-    return res.status(405).setHeaders(corsHeaders).json({ 
-      success: false, 
-      error: 'Method not allowed' 
-    });
+function setCors(res: NextApiResponse) {
+  for (const [k, v] of Object.entries(corsHeaders)) {
+    res.setHeader(k, v);
   }
 }
 
-async function handleInit(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // CORS preflight
+  if (req.method === "OPTIONS") {
+    setCors(res);
+    res.status(200).end();
+    return;
+  }
+
+  if (req.method === "POST") {
+    await handleInit(req, res);
+    return;
+  }
+
+  if (req.method === "GET") {
+    await handleStatus(req, res);
+    return;
+  }
+
+  setCors(res);
+  res.status(405).json({ success: false, error: "Method not allowed" });
+}
+
+type DocRow = {
+  content: string;
+  metadata: unknown;
+  embedding: number[];
+};
+
+async function handleInit(_req: NextApiRequest, res: NextApiResponse) {
   try {
-    console.log('🚀 Starting RAG system initialization...');
-    
-    // Setup database schema
+    setCors(res);
+    console.log("🚀 Starting RAG system initialization...");
+
     await setupDatabase();
-    
-    // Initialize embeddings
+
     const embeddings = new GeminiEmbeddings(process.env.GOOGLE_AI_API_KEY!);
-    
-    // Chunk resume data
+
     const chunks = await chunkResume();
     console.log(`📄 Created ${chunks.length} resume chunks`);
-    
-    // Clear existing documents
+
+    // Clear existing documents (keep a null UUID if that's intentional)
     const { error: deleteError } = await supabase
-      .from('documents')
+      .from("documents")
       .delete()
-      .neq('id', '00000000-0000-0000-0000-000000000000');
-    
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+
     if (deleteError) {
-      console.log('Error clearing documents:', deleteError.message);
+      console.warn("Error clearing documents:", deleteError.message);
     }
-    
-    // Embed and store chunks
-    const documentsToInsert = [];
-    
+
+    const documentsToInsert: DocRow[] = [];
+
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
-      console.log(`🔍 Embedding chunk ${i + 1}/${chunks.length}: ${chunk.content.substring(0, 50)}...`);
-      
+      console.log(
+        `🔍 Embedding chunk ${i + 1}/${chunks.length}: ${chunk.content.substring(0, 50)}...`
+      );
+
       try {
         const embedding = await embeddings.embedQuery(chunk.content);
-        console.log(`✅ Chunk ${i + 1} embedded successfully (${embedding.length} dimensions)`);
-        
+        console.log(
+          `✅ Chunk ${i + 1} embedded successfully (${embedding.length} dimensions)`
+        );
+
         documentsToInsert.push({
           content: chunk.content,
           metadata: chunk.metadata,
-          embedding: embedding
+          embedding,
         });
-        
-        // Add small delay to respect API limits
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-      } catch (error) {
-        console.error(`❌ Error embedding chunk ${i + 1}:`, error.message);
+
+        // Gentle throttle
+        await new Promise((r) => setTimeout(r, 100));
+      } catch (err: any) {
+        console.error(`❌ Error embedding chunk ${i + 1}:`, err?.message ?? err);
       }
     }
-    
-    // Insert documents in batches
+
+    // Batch insert
     const batchSize = 10;
     for (let i = 0; i < documentsToInsert.length; i += batchSize) {
       const batch = documentsToInsert.slice(i, i + batchSize);
-      
+
       const { error: insertError } = await supabase
-        .from('documents')
+        .from("documents")
         .insert(batch);
-      
+
       if (insertError) {
-        console.error('Error inserting batch:', insertError);
+        console.error("Error inserting batch:", insertError);
       } else {
-        console.log(`✅ Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(documentsToInsert.length / batchSize)}`);
+        console.log(
+          `✅ Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(
+            documentsToInsert.length / batchSize
+          )}`
+        );
       }
     }
-    
+
     const stats = await getResumeStats();
-    
-    res.status(200).setHeaders(corsHeaders).json({
+
+    res.status(200).json({
       success: true,
-      message: 'RAG system initialized successfully',
+      message: "RAG system initialized successfully",
       stats: {
         documentsInserted: documentsToInsert.length,
         totalChunks: chunks.length,
-        resumeStats: stats
-      }
+        resumeStats: stats,
+      },
     });
-    
-  } catch (error: any) {
-    console.error('Setup error:', error);
-    res.status(500).setHeaders(corsHeaders).json({
+  } catch (err: any) {
+    console.error("Setup error:", err);
+    setCors(res);
+    res.status(500).json({
       success: false,
-      error: error.message
+      error: err?.message ?? "Unknown error",
     });
   }
 }
 
-async function handleStatus(req: NextApiRequest, res: NextApiResponse) {
+async function handleStatus(_req: NextApiRequest, res: NextApiResponse) {
   try {
-    // Check document count
+    setCors(res);
+
     const { count, error } = await supabase
-      .from('documents')
-      .select('*', { count: 'exact', head: true });
-    
-    if (error) {
-      throw error;
-    }
-    
-    // Check chat count
+      .from("documents")
+      .select("*", { count: "exact", head: true });
+
+    if (error) throw error;
+
     const { count: chatCount, error: chatError } = await supabase
-      .from('chats')
-      .select('*', { count: 'exact', head: true });
-    
-    if (chatError) {
-      throw chatError;
-    }
-    
+      .from("chats")
+      .select("*", { count: "exact", head: true });
+
+    if (chatError) throw chatError;
+
     const stats = await getResumeStats();
-    
-    res.status(200).setHeaders(corsHeaders).json({
+
+    res.status(200).json({
       success: true,
       status: {
-        documentsCount: count,
-        chatsCount: chatCount,
+        documentsCount: count ?? 0,
+        chatsCount: chatCount ?? 0,
         resumeStats: stats,
-        expectedChunks: stats.totalChunks
-      }
+        expectedChunks: stats.totalChunks,
+      },
     });
-    
-  } catch (error: any) {
-    console.error('Status check error:', error);
-    res.status(500).setHeaders(corsHeaders).json({
+  } catch (err: any) {
+    console.error("Status check error:", err);
+    setCors(res);
+    res.status(500).json({
       success: false,
-      error: error.message
+      error: err?.message ?? "Unknown error",
     });
   }
 }
