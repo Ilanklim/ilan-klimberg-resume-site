@@ -1,149 +1,130 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GeminiEmbeddings } from '../lib/gemini-embeddings.js';
-import { supabase } from '../lib/supabase.js';
-import { querySchema } from '../lib/validation.js';
+// pages/api/query.ts
+import type { NextApiRequest, NextApiResponse } from "next";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GeminiEmbeddings } from "../lib/gemini-embeddings";
+import { supabase } from "../lib/supabase";
+import { querySchema } from "../lib/validation";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
-};
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+} as const;
 
-function sanitizeInput(input: string): string {
-  return input
-    .replace(/[<>]/g, '') // Remove potential HTML
-    .replace(/javascript:/gi, '') // Remove javascript: URLs
-    .replace(/on\w+=/gi, '') // Remove event handlers
-    .trim();
+function setCors(res: NextApiResponse) {
+  for (const [k, v] of Object.entries(corsHeaders)) res.setHeader(k, v);
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'authorization, x-client-info, apikey, content-type');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  setCors(res);
 
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).json({});
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+    return;
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Method not allowed',
-      allowedMethods: ['POST']
+  if (req.method !== "POST") {
+    res.status(405).json({
+      success: false,
+      error: "Method not allowed",
+      allowedMethods: ["POST"],
     });
+    return;
   }
 
   try {
-    // Validate and sanitize input
     const validation = querySchema.safeParse(req.body);
     if (!validation.success) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
-        error: 'Invalid input: ' + validation.error.errors.map(e => e.message).join(', ')
+        error:
+          "Invalid input: " +
+          validation.error.errors.map((e) => e.message).join(", "),
       });
+      return;
     }
+
+    const sanitizeInput = (input: string) =>
+      input
+        .replace(/[<>]/g, "")
+        .replace(/javascript:/gi, "")
+        .replace(/on\w+=/gi, "")
+        .trim();
 
     const { question } = validation.data;
     const sanitizedQuestion = sanitizeInput(question);
-    
     if (!sanitizedQuestion) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
-        error: 'Question cannot be empty after sanitization'
+        error: "Question cannot be empty after sanitization",
       });
+      return;
     }
 
-    // Get user from Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(401).json({
-        success: false,
-        error: 'Authorization required'
-      });
+      res.status(401).json({ success: false, error: "Authorization required" });
+      return;
     }
 
-    // Get user session to verify authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
+    const token = authHeader.replace("Bearer ", "");
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
-      return res.status(401).json({
-        success: false,
-        error: 'Invalid or expired session'
-      });
+      res.status(401).json({ success: false, error: "Invalid or expired session" });
+      return;
     }
 
-    console.log(`🔍 Processing query for user ${user.id}: "${sanitizedQuestion}"`);
-
-    // Check daily query limit using Supabase function
-    const { data: canQuery, error: limitError } = await supabase
-      .rpc('can_make_query', { target_user_id: user.id });
-
+    const { data: canQuery, error: limitError } = await supabase.rpc(
+      "can_make_query",
+      { target_user_id: user.id }
+    );
     if (limitError) {
-      console.error('Error checking query limit:', limitError);
-      return res.status(500).json({
-        success: false,
-        error: 'Unable to verify query limit'
-      });
+      res.status(500).json({ success: false, error: "Unable to verify query limit" });
+      return;
     }
-
     if (!canQuery) {
-      // Get current count for user feedback
-      const { data: dailyCount } = await supabase
-        .rpc('get_daily_query_count', { target_user_id: user.id });
-
-      return res.status(429).json({
+      const { data: dailyCount } = await supabase.rpc("get_daily_query_count", {
+        target_user_id: user.id,
+      });
+      res.status(429).json({
         success: false,
         error: `Daily query limit reached (${dailyCount}/10). Try again tomorrow!`,
         dailyCount,
-        maxQueries: 10
+        maxQueries: 10,
       });
+      return;
     }
 
-    // Check for Google AI API key
     const googleAIKey = process.env.GOOGLE_AI_API_KEY;
     if (!googleAIKey) {
-      console.error('Missing GOOGLE_AI_API_KEY environment variable');
-      return res.status(500).json({
-        success: false,
-        error: 'AI service configuration error'
-      });
+      res.status(500).json({ success: false, error: "AI service configuration error" });
+      return;
     }
-    
-    // 1. Initialize Gemini embeddings for secure vector search
+
     const embeddings = new GeminiEmbeddings(googleAIKey);
     const questionEmbedding = await embeddings.embedQuery(sanitizedQuestion);
-    
-    // 2. Use secure document matching function with authentication controls
-    const { data: similarDocs, error: searchError } = await supabase.rpc('match_documents_secure', {
-      query_embedding: questionEmbedding,
-      match_threshold: 0.3,
-      match_count: 5
-    });
-    
-    console.log(`🔍 Vector search completed. Found ${similarDocs?.length || 0} similar documents`);
-    
-    // 3. Prepare context from retrieved documents or use fallback
-    let context;
-    if (searchError) {
-      console.error('Secure vector search error:', searchError);
-      // Use fallback context if secure search fails
-      context = "This is Ilan Klimberg's resume information. He is a data scientist and software engineer with experience in machine learning, web development, and blockchain technology.";
-    } else if (!similarDocs || similarDocs.length === 0) {
-      context = "This is Ilan Klimberg's resume information. He is a data scientist and software engineer with experience in machine learning, web development, and blockchain technology.";
+
+    const { data: similarDocs, error: searchError } = await supabase.rpc(
+      "match_documents_secure",
+      { query_embedding: questionEmbedding, match_threshold: 0.3, match_count: 5 }
+    );
+
+    let context: string;
+    if (searchError || !similarDocs?.length) {
+      context =
+        "This is Ilan Klimberg's resume information. He is a data scientist and software engineer with experience in machine learning, web development, and blockchain technology.";
     } else {
-      context = similarDocs.map(doc => doc.content).join('\n\n');
+      context = similarDocs.map((d: { content: string }) => d.content).join("\n\n");
     }
-    
-    // 4. Generate response using Gemini with retrieved/fallback context
+
     const genAI = new GoogleGenerativeAI(googleAIKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
     const prompt = `You are an AI assistant helping to answer questions about Ilan Klimberg's resume and experience. 
 
 Context from Ilan's resume:
@@ -154,50 +135,35 @@ Question: ${sanitizedQuestion}
 Please provide a helpful, accurate answer based on the context above. Be conversational and professional. If the context doesn't contain enough information to fully answer the question, acknowledge what you can answer and suggest reaching out to Ilan directly.
 
 Answer:`;
-    
+
     const result = await model.generateContent(prompt);
     const answer = result.response.text();
 
-    // 5. Store the query and response in database
-    const { error: logError } = await supabase
-      .from('chats')
-      .insert({
-        user_id: user.id,
-        message: sanitizedQuestion,
-        response: answer
-      });
-    
-    if (logError) {
-      console.error('Error logging chat:', logError);
-      // Continue anyway - don't fail the request if logging fails
-    }
+    await supabase.from("chats").insert({
+      user_id: user.id,
+      message: sanitizedQuestion,
+      response: answer,
+    });
 
-    // Get updated query count for response
-    const { data: updatedCount } = await supabase
-      .rpc('get_daily_query_count', { target_user_id: user.id });
-    
-    // 6. Return response
+    const { data: updatedCount } = await supabase.rpc("get_daily_query_count", {
+      target_user_id: user.id,
+    });
+
     res.status(200).json({
       success: true,
-      answer: answer,
+      answer,
       question: sanitizedQuestion,
       dailyCount: updatedCount || 0,
       maxQueries: 10,
-      remainingQueries: Math.max(0, 10 - (updatedCount || 0))
+      remainingQueries: Math.max(0, 10 - (updatedCount || 0)),
     });
-    
-  } catch (error: any) {
-    console.error('Query processing error:', error);
-    
-    // Don't expose internal errors in production
-    const isProduction = process.env.NODE_ENV === 'production';
-    const errorMessage = isProduction 
-      ? 'An error occurred while processing your request. Please try again later.'
-      : `Error: ${error.message}`;
-    
+  } catch (err: any) {
+    const isProduction = process.env.NODE_ENV === "production";
     res.status(500).json({
       success: false,
-      error: errorMessage
+      error: isProduction
+        ? "An error occurred while processing your request. Please try again later."
+        : `Error: ${err?.message ?? String(err)}`,
     });
   }
 }
