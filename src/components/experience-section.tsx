@@ -1,7 +1,7 @@
-import { Section } from "@components/ui/section"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Section } from "../components/ui/section"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
+import { Badge } from "../components/ui/badge"
+import { Button } from "../components/ui/button"
 import { Calendar, MapPin, ExternalLink, TrendingUp, Users, Target, Briefcase, Blocks } from "lucide-react"
 
 interface Experience {
