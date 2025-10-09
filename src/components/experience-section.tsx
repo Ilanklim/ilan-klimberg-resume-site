@@ -1,4 +1,4 @@
-import { Section } from "@/components/ui/section"
+import { Section } from "@components/ui/section"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -19,6 +19,22 @@ interface Experience {
 }
 
 const experiences: Experience[] = [
+  {
+    title: "Associate Product Management Intern",
+    company: "Coinbase",
+    location: "San Francisco, CA",
+    period: "May 2025 – Aug 2025",
+    description: "Largest American crypto exchange",
+    highlights: [
+      "Led in-app communications for DEX launch to 30M users, collaborating with legal, marketing, design, and product; achieved 97% CTR on notifications and 54% engagement with custom FSTO",
+      "Built and launched an Amplitude dashboard replacing Superset/Datadog tools, tracking funnels from announcement card → FSTO → DEX buy; adopted by eng, design, and product for launch monitoring",
+      "Drove depreciation of legacy Web3 Wallet, creating FSTO and coordinating FSTO ramp from 1%→10%→100%, resulting in deprecation of 45% of users and 62% of HNWIs"
+    ],
+    skills: ["Go-to-Market Strategy", "Product Strategy", "Wrapped Assets", "Blockchain", "Data Analytics"],
+    companyUrl: "https://www.coinbase.com/trade-crypto/dex",
+    icon: Blocks,
+    color: "from-blue-500 to-blue-700"
+  },
   {
     title: "Founder",
     company: "KBCrypto",
