@@ -1,5 +1,6 @@
 import { Mail, Phone, Linkedin, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SmartSearchBar } from "./smart-search-bar";
 export function HeroSection() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -25,11 +26,16 @@ export function HeroSection() {
             </p>
             <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
               Cornell CIS student passionate about blockchain, fintech, and building innovative solutions. 
-              Co-founder with proven track record in software engineering, crypto, and product management.
+              Co-founder with proven track record in <a href="#experience" className="text-primary hover:underline">fundraising and product management</a>, 
+              specializing in <a href="#skills" className="text-primary hover:underline">full-stack development</a> and 
+              <a href="#projects" className="text-primary hover:underline">blockchain technology</a>.
             </p>
           </div>
 
-          {/* Action Buttons */}
+          {/* Smart Search Bar */}
+          <SmartSearchBar />
+          
+          {/* Contact Links */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 text-sm">
             {/* <a href="tel:+13055020995" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
               <Phone className="h-4 w-4" />
@@ -47,11 +53,6 @@ export function HeroSection() {
               <Github className="h-4 w-4" />
               <span>GitHub</span>
             </a>
-          </div>
-
-          {/* Search Bar Component Placeholder - will be inserted here from Index.tsx */}
-          <div id="search-bar-container" className="mb-8">
-            {/* Search bar will be rendered here */}
           </div>
 
           {/* Action Buttons */}
