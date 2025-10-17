@@ -7,33 +7,34 @@ import { OrganizationsSection } from "@/components/organizations-section"
 import { InterestsSection } from "@/components/interests-section"
 import { ContactSection } from "@/components/contact-section"
 import { SEOStructuredData } from "@/components/seo-structured-data"
+import { Section } from "@/components/ui/section";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOStructuredData />
       <HeroSection />
-      <section id="education">
+      <Section id="education">
         <EducationSection />
-      </section>
-      <section id="skills">
+      </Section>
+      <Section id="skills">
         <SkillsSection />
-      </section>
-      <section id="experience">
+      </Section>
+      <Section id="experience">
         <ExperienceSection />
-      </section>
-      <section id="projects">
+      </Section>
+      <Section id="projects">
         <ProjectsSection />
-      </section>
-      <section id="organizations">
+      </Section>
+      <Section id="organizations">
         <OrganizationsSection />
-      </section>
-      <section id="interests">
+      </Section>
+      <Section id="interests">
         <InterestsSection />
-      </section>
-      <section id="contact">
+      </Section>
+      <Section id="contact">
         <ContactSection />
-      </section>
+      </Section>
     </div>
   );
 };
