@@ -14,30 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      documents: {
-        Row: {
-          content: string
-          created_at: string | null
-          embedding: string | null
-          id: string
-          metadata: Json | null
-        }
-        Insert: {
-          content: string
-          created_at?: string | null
-          embedding?: string | null
-          id?: string
-          metadata?: Json | null
-        }
-        Update: {
-          content?: string
-          created_at?: string | null
-          embedding?: string | null
-          id?: string
-          metadata?: Json | null
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           created_at: string
@@ -67,28 +43,48 @@ export type Database = {
       }
       questions: {
         Row: {
-          anonymous_id: string
+          anon_id: string
           answer_text: string | null
           created_at: string | null
           id: string
           question_text: string
-          relevant_documents: Json | null
         }
         Insert: {
-          anonymous_id: string
+          anon_id: string
           answer_text?: string | null
           created_at?: string | null
           id?: string
           question_text: string
-          relevant_documents?: Json | null
         }
         Update: {
-          anonymous_id?: string
+          anon_id?: string
           answer_text?: string | null
           created_at?: string | null
           id?: string
           question_text?: string
-          relevant_documents?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_anon_id_fkey"
+            columns: ["anon_id"]
+            isOneToOne: false
+            referencedRelation: "users_anonymous"
+            referencedColumns: ["anon_id"]
+          },
+        ]
+      }
+      users_anonymous: {
+        Row: {
+          anon_id: string
+          created_at: string | null
+        }
+        Insert: {
+          anon_id: string
+          created_at?: string | null
+        }
+        Update: {
+          anon_id?: string
+          created_at?: string | null
         }
         Relationships: []
       }
