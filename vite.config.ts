@@ -22,10 +22,9 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: "dist",
     sourcemap: mode === 'development',
-    // Skip TypeScript checking during build to avoid project reference issues
     emptyOutDir: true,
   },
-  // Override TypeScript config to avoid project reference issues
+  // Bypass TypeScript project reference issues
   esbuild: {
     tsconfigRaw: {
       compilerOptions: {
@@ -51,7 +50,6 @@ export default defineConfig(({ mode }) => ({
       }
     }
   },
-  // Configure for API routes if needed
   define: {
     global: 'globalThis',
   },

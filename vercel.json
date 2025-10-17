@@ -1,19 +1,19 @@
 {
-  "buildCommand": "vite build",
-  "outputDirectory": "dist", 
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "framework": null,
   "installCommand": "npm install",
   "devCommand": "vite --host :: --port $PORT",
   "functions": {
     "api/rag-query.ts": {
       "maxDuration": 30,
-      "runtime": "@vercel/node"
+      "runtime": "nodejs20.x"
     }
   },
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
+      "source": "/api/rag-query",
+      "destination": "/api/rag-query"
     },
     {
       "source": "/(.*)",
@@ -25,18 +25,29 @@
       "source": "/api/(.*)",
       "headers": [
         {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://ilanklimberg.com, http://localhost:8080"
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
         },
         {
-          "key": "Access-Control-Allow-Methods", 
-          "value": "POST, OPTIONS"
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
+          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
         }
       ]
     }
-  ]
+  ],
+  "env": {
+    "GOOGLE_AI_API_KEY": "@google_ai_api_key",
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key",
+    "CORS_ALLOW_ORIGINS": "@cors_allow_origins",
+    "DAILY_QUERY_CAP": "@daily_query_cap"
+  }
 }
