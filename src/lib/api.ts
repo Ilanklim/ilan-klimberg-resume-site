@@ -1,2 +1,2 @@
 // Centralized API base URL logic
-export const API_BASE_URL = '/api';
+export const API_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;

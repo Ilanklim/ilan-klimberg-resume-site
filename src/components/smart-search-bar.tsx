@@ -33,7 +33,7 @@ export function SmartSearchBar() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
       
-      const response = await fetch(`${API_BASE_URL}/api/query`, {
+      const response = await fetch(`${API_BASE_URL}/rag-query`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
