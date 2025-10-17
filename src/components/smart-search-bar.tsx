@@ -14,6 +14,20 @@ interface SearchResponse {
   success: boolean
 }
 
+// Generate or retrieve anonymous ID
+const getAnonymousId = (): string => {
+  const ANON_KEY = 'rag_anonymous_id';
+  let anonId = localStorage.getItem(ANON_KEY);
+  
+  if (!anonId) {
+    // Generate a unique anonymous ID
+    anonId = `anon_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+    localStorage.setItem(ANON_KEY, anonId);
+  }
+  
+  return anonId;
+};
+
 export function SmartSearchBar() {
   const [query, setQuery] = useState("")
   const [response, setResponse] = useState<SearchResponse | null>(null)
@@ -33,12 +47,17 @@ export function SmartSearchBar() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
       
+      const anonymousId = getAnonymousId();
+      
       const response = await fetch(`${API_BASE_URL}/rag-query`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ question: query }),
+        body: JSON.stringify({ 
+          question: query,
+          anonymousId: anonymousId
+        }),
         signal: controller.signal
       })
       

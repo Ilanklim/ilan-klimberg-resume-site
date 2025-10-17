@@ -38,11 +38,18 @@ serve(async (req) => {
   }
 
   try {
-    const { question } = await req.json();
+    const { question, anonymousId } = await req.json();
     
     if (!question) {
       return new Response(
         JSON.stringify({ success: false, error: 'Question is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!anonymousId) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Anonymous ID is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -117,17 +124,21 @@ Answer:`;
     const geminiData = await geminiResponse.json();
     const answer = geminiData.candidates[0].content.parts[0].text;
     
-    // 5. Log the interaction
+    // 5. Log the interaction to questions table
     const { error: logError } = await supabase
-      .from('chats')
+      .from('questions')
       .insert({
-        message: question,
-        response: answer,
-        user_id: '00000000-0000-0000-0000-000000000000' // Anonymous user for public queries
+        anonymous_id: anonymousId,
+        question_text: question,
+        answer_text: answer,
+        relevant_documents: similarDocs.map(doc => ({
+          content: doc.content,
+          metadata: doc.metadata
+        }))
       });
     
     if (logError) {
-      console.error('Error logging chat:', logError);
+      console.error('Error logging question:', logError);
     }
     
     // 6. Return response

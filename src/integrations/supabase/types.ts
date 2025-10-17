@@ -7,37 +7,13 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
   }
   public: {
     Tables: {
-      chats: {
-        Row: {
-          answer: string
-          created_at: string | null
-          id: string
-          question: string
-          relevant_documents: Json | null
-        }
-        Insert: {
-          answer: string
-          created_at?: string | null
-          id?: string
-          question: string
-          relevant_documents?: Json | null
-        }
-        Update: {
-          answer?: string
-          created_at?: string | null
-          id?: string
-          question?: string
-          relevant_documents?: Json | null
-        }
-        Relationships: []
-      }
       documents: {
         Row: {
           content: string
@@ -62,6 +38,60 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          role: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          anonymous_id: string
+          answer_text: string | null
+          created_at: string | null
+          id: string
+          question_text: string
+          relevant_documents: Json | null
+        }
+        Insert: {
+          anonymous_id: string
+          answer_text?: string | null
+          created_at?: string | null
+          id?: string
+          question_text: string
+          relevant_documents?: Json | null
+        }
+        Update: {
+          anonymous_id?: string
+          answer_text?: string | null
+          created_at?: string | null
+          id?: string
+          question_text?: string
+          relevant_documents?: Json | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -70,6 +100,14 @@ export type Database = {
       binary_quantize: {
         Args: { "": string } | { "": unknown }
         Returns: unknown
+      }
+      can_make_query: {
+        Args: { target_user_id?: string }
+        Returns: boolean
+      }
+      get_daily_query_count: {
+        Args: { target_user_id?: string }
+        Returns: number
       }
       halfvec_avg: {
         Args: { "": number[] }
@@ -103,6 +141,10 @@ export type Database = {
         Args: { "": unknown }
         Returns: unknown
       }
+      is_admin: {
+        Args: { user_uuid?: string }
+        Returns: boolean
+      }
       ivfflat_bit_support: {
         Args: { "": unknown }
         Returns: unknown
@@ -125,26 +167,26 @@ export type Database = {
       }
       match_documents: {
         Args: {
-          query_embedding: string
-          match_threshold?: number
           match_count?: number
+          match_threshold?: number
+          query_embedding: string
         }
         Returns: {
-          id: string
           content: string
+          id: string
           metadata: Json
           similarity: number
         }[]
       }
       match_documents_secure: {
         Args: {
-          query_embedding: string
-          match_threshold?: number
           match_count?: number
+          match_threshold?: number
+          query_embedding: string
         }
         Returns: {
-          id: string
           content: string
+          id: string
           metadata: Json
           similarity: number
         }[]
